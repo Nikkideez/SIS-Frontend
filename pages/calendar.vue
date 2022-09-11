@@ -4,17 +4,17 @@
       <CalList />
     </div>
     <div class="schedule-container">
-      <CalendarApp/>
+      <CalApp/>
     </div>
   </div>
 </template>
   
 <script>
-import CalList from '../components/CalList.vue'
-import CalendarApp from '~/components/CalendarApp.vue';
+import CalList from '~/components/Calendar/CalList.vue';
+import CalApp from '~/components/Calendar/CalApp.vue';
 export default {
   name: 'TestPage',
-  components: { CalList, CalendarApp },
+  components: { CalList, CalApp },
 }
 </script>
   

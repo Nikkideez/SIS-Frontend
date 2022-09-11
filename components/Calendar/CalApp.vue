@@ -1,4 +1,5 @@
 <template>
+  <!-- The toolbar for the calendar -->
   <v-row class="fill-height">
     <v-col>
       <v-sheet height="64">
@@ -62,7 +63,7 @@
           @mouseup:time="endDrag"
           @mouseleave.native="cancelDrag"
         >
-				<!-- This part helps add a draggable thing to the bottom of events incase you want to extend them -->
+          <!-- This part helps add a draggable thing to the bottom of events incase you want to extend them -->
           <template v-slot:event="{ event, timed, eventSummary }">
             <div class="v-event-draggable" v-html="eventSummary()"></div>
             <div
@@ -72,46 +73,29 @@
             ></div>
           </template>
         </v-calendar>
-				<!-- Dialogue that appears when you click on an event -->
+        <!-- Dialogue that appears when you click on an event -->
         <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
           :activator="selectedElement"
           offset-x
         >
-          <v-card color="grey lighten-4" min-width="600px" flat>
-            <v-toolbar :color="selectedEvent.color" dark>
-              <v-btn icon>
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
-              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-              <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
-            </v-toolbar>
-            <v-card-text>
-              <span v-html="selectedEvent.details"></span>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn text color="secondary" @click="selectedOpen = false">
-                Cancel
-              </v-btn>
-            </v-card-actions>
-          </v-card>
+          <CalDialogue 
+            :selectedEvent="selectedEvent" 
+            :closeDialogue="closeDialogue"
+          />
         </v-menu>
       </v-sheet>
     </v-col>
   </v-row>
 </template>
 
-<!-- Heaps of functions -->
+<!-- Heaps of variables, objects and functions :-( -->
 <script>
+import CalDialogue from "./CalDialogue.vue";
 export default {
   name: "CalendarApp",
+  // some data will be pulled from backend when connected
   data: () => ({
     focus: "",
     type: "month",
@@ -123,7 +107,7 @@ export default {
     },
     selectedEvent: {},
     selectedElement: null,
-    selectedOpen: false,
+    selectedOpen: false, //Decides whether the dialogue should be open or not
     events: [],
     colors: [
       "blue",
@@ -144,7 +128,6 @@ export default {
       "Conference",
       "Party",
     ],
-    events: [],
     dragEvent: null,
     dragStart: null,
     createEvent: null,
@@ -172,6 +155,7 @@ export default {
       this.$refs.calendar.next();
     },
     showEvent({ nativeEvent, event }) {
+      console.log("showevent");
       const open = () => {
         this.selectedEvent = event;
         this.selectedElement = nativeEvent.target;
@@ -181,46 +165,20 @@ export default {
           })
         );
       };
-
       if (this.selectedOpen) {
         this.selectedOpen = false;
         requestAnimationFrame(() => requestAnimationFrame(() => open()));
       } else {
         open();
       }
-
       nativeEvent.stopPropagation();
     },
-    updateRange({ start, end }) {
-      const events = [];
-
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-      const days = (max.getTime() - min.getTime()) / 86400000;
-      const eventCount = this.rnd(days, days + 20);
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0;
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-        const second = new Date(first.getTime() + secondTimestamp);
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: first,
-          end: second,
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-          timed: !allDay,
-        });
-      }
-
-      this.events = events;
-    },
     rnd(a, b) {
+      console.log("rnd");
       return Math.floor((b - a + 1) * Math.random()) + a;
     },
     startDrag({ event, timed }) {
+      console.log("startDrag");
       if (event && timed) {
         this.dragEvent = event;
         this.dragTime = null;
@@ -228,14 +186,15 @@ export default {
       }
     },
     startTime(tms) {
+      console.log("startTime");
       const mouse = this.toTime(tms);
-
       if (this.dragEvent && this.dragTime === null) {
         const start = this.dragEvent.start;
-
         this.dragTime = mouse - start;
       } else {
         this.createStart = this.roundTime(mouse);
+        // createEvent is the object which holds a single events details.
+        // adding more keys to this object will correlate to the data which an event holds
         this.createEvent = {
           name: `Event #${this.events.length}`,
           color: this.rndElement(this.colors),
@@ -243,7 +202,6 @@ export default {
           end: this.createStart,
           timed: true,
         };
-
         this.events.push(this.createEvent);
       }
     },
@@ -253,8 +211,9 @@ export default {
       this.extendOriginal = event.end;
     },
     mouseMove(tms) {
+      // console.log("mouseMove");
       const mouse = this.toTime(tms);
-
+      // console.log(tms);
       if (this.dragEvent && this.dragTime !== null) {
         const start = this.dragEvent.start;
         const end = this.dragEvent.end;
@@ -262,14 +221,12 @@ export default {
         const newStartTime = mouse - this.dragTime;
         const newStart = this.roundTime(newStartTime);
         const newEnd = newStart + duration;
-
         this.dragEvent.start = newStart;
         this.dragEvent.end = newEnd;
       } else if (this.createEvent && this.createStart !== null) {
         const mouseRounded = this.roundTime(mouse, false);
         const min = Math.min(mouseRounded, this.createStart);
         const max = Math.max(mouseRounded, this.createStart);
-
         this.createEvent.start = min;
         this.createEvent.end = max;
       }
@@ -292,7 +249,6 @@ export default {
           }
         }
       }
-
       this.createEvent = null;
       this.createStart = null;
       this.dragTime = null;
@@ -301,7 +257,6 @@ export default {
     roundTime(time, down = true) {
       const roundTo = 15; // minutes
       const roundDownTime = roundTo * 60 * 1000;
-
       return down
         ? time - (time % roundDownTime)
         : time + (roundDownTime - (time % roundDownTime));
@@ -317,41 +272,41 @@ export default {
     },
     getEventColor(event) {
       const rgb = parseInt(event.color.substring(1), 16);
-      const r = (rgb >> 16) & 0xff;
-      const g = (rgb >> 8) & 0xff;
-      const b = (rgb >> 0) & 0xff;
-
+      const r = (rgb >> 16) & 255;
+      const g = (rgb >> 8) & 255;
+      const b = (rgb >> 0) & 255;
+      console.log("getEventColor");
       return event === this.dragEvent
         ? `rgba(${r}, ${g}, ${b}, 0.7)`
         : event === this.createEvent
         ? `rgba(${r}, ${g}, ${b}, 0.7)`
         : event.color;
     },
-    getEvents({ start, end }) {
+    // updateRange help gets the events
+    // Right now its just getting a random number of event so this behavior needs to be changed
+    updateRange({ start, end }) {
       const events = [];
-
-      const min = new Date(`${start.date}T00:00:00`).getTime();
-      const max = new Date(`${end.date}T23:59:59`).getTime();
-      const days = (max - min) / 86400000;
+      const min = new Date(`${start.date}T00:00:00`);
+      const max = new Date(`${end.date}T23:59:59`);
+      const days = (max.getTime() - min.getTime()) / 86400000;
       const eventCount = this.rnd(days, days + 20);
-
       for (let i = 0; i < eventCount; i++) {
-        const timed = this.rnd(0, 3) !== 0;
-        const firstTimestamp = this.rnd(min, max);
-        const secondTimestamp = this.rnd(2, timed ? 8 : 288) * 900000;
-        const start = firstTimestamp - (firstTimestamp % 900000);
-        const end = start + secondTimestamp;
-
+        const allDay = this.rnd(0, 3) === 0;
+        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
+        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
+        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
+        const second = new Date(first.getTime() + secondTimestamp);
         events.push({
-          name: this.rndElement(this.names),
-          color: this.rndElement(this.colors),
-          start,
-          end,
-          timed,
+          name: this.names[this.rnd(0, this.names.length - 1)],
+          start: first,
+          end: second,
+          color: this.colors[this.rnd(0, this.colors.length - 1)],
+          timed: !allDay,
         });
       }
-
       this.events = events;
+      // events is the object that holds all the data for events
+      console.log(events);
     },
     rnd(a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a;
@@ -359,11 +314,17 @@ export default {
     rndElement(arr) {
       return arr[this.rnd(0, arr.length - 1)];
     },
+    // Closing the Dialogue
+    closeDialogue() {
+      this.selectedOpen = false;
+    }
   },
+  components: { CalDialogue },
 };
 </script>
 
 <!-- SCSS styling (some slightly different syntax when compare to CSS) -->
+<!-- This SCSS lets you drag existing events (Pretty crazy how SCSS can do this) -->
 <style scoped lang="scss">
 .v-event-draggable {
   padding-left: 6px;

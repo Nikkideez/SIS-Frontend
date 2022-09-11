@@ -1,5 +1,5 @@
 <template>
-  <!-- <v-card color="grey lighten-4" min-width="600px" flat>
+  <v-card color="grey lighten-4" min-width="600px" flat>
     <v-toolbar :color="selectedEvent.color" dark>
       <v-btn icon>
         <v-icon>mdi-pencil</v-icon>
@@ -17,9 +17,18 @@
       <span v-html="selectedEvent.details"></span>
     </v-card-text>
     <v-card-actions>
-      <v-btn text color="secondary" @click="selectedOpen = false">
+      <v-btn text color="secondary" @click="closeDialogue">
         Cancel
       </v-btn>
     </v-card-actions>
-  </v-card> -->
+  </v-card>
 </template>
+
+<script>
+export default {
+  name: 'CalDialogue',
+  props: ['selectedEvent', 'closeDialogue']
+
+
+}
+</script>

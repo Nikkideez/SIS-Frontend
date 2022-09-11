@@ -110,7 +110,7 @@ export default {
         {
           icon: 'mdi-calendar',
           title: 'calendar',
-          to: '/test',
+          to: '/calendar',
         }
       ],
       miniVariant: false,
