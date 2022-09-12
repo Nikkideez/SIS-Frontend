@@ -4,6 +4,10 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat>
+          <!-- <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
+            Create Event
+          </v-btn> -->
+          <CalCreateEvent />
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Today
           </v-btn>
@@ -80,8 +84,8 @@
           :activator="selectedElement"
           offset-x
         >
-          <CalDialogue 
-            :selectedEvent="selectedEvent" 
+          <CalMenu
+            :selectedEvent="selectedEvent"
             :closeDialogue="closeDialogue"
           />
         </v-menu>
@@ -92,9 +96,11 @@
 
 <!-- Heaps of variables, objects and functions :-( -->
 <script>
-import CalDialogue from "./CalDialogue.vue";
+import CalMenu from "./CalMenu.vue";
+import CalCreateEvent from "./CreateEvent/CalCreateEvent.vue";
 export default {
   name: "CalendarApp",
+  components: { CalMenu, CalCreateEvent },
   // some data will be pulled from backend when connected
   data: () => ({
     focus: "",
@@ -108,7 +114,7 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false, //Decides whether the dialogue should be open or not
-    events: [],
+    events: [], // Object that holds all events
     colors: [
       "blue",
       "indigo",
@@ -133,6 +139,7 @@ export default {
     createEvent: null,
     createStart: null,
     extendOriginal: null,
+    isMouseDown: false,
   }),
   mounted() {
     this.$refs.calendar.checkChange();
@@ -186,12 +193,15 @@ export default {
       }
     },
     startTime(tms) {
-      console.log("startTime");
+      this.isMouseDown = true;
+      // console.log("startTime");
       const mouse = this.toTime(tms);
       if (this.dragEvent && this.dragTime === null) {
+        console.log("startTime 1");
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
       } else {
+        console.log("startTime 2");
         this.createStart = this.roundTime(mouse);
         // createEvent is the object which holds a single events details.
         // adding more keys to this object will correlate to the data which an event holds
@@ -206,29 +216,35 @@ export default {
       }
     },
     extendBottom(event) {
+      this.isMouseDown = true;
       this.createEvent = event;
       this.createStart = event.start;
       this.extendOriginal = event.end;
     },
     mouseMove(tms) {
       // console.log("mouseMove");
-      const mouse = this.toTime(tms);
-      // console.log(tms);
-      if (this.dragEvent && this.dragTime !== null) {
-        const start = this.dragEvent.start;
-        const end = this.dragEvent.end;
-        const duration = end - start;
-        const newStartTime = mouse - this.dragTime;
-        const newStart = this.roundTime(newStartTime);
-        const newEnd = newStart + duration;
-        this.dragEvent.start = newStart;
-        this.dragEvent.end = newEnd;
-      } else if (this.createEvent && this.createStart !== null) {
-        const mouseRounded = this.roundTime(mouse, false);
-        const min = Math.min(mouseRounded, this.createStart);
-        const max = Math.max(mouseRounded, this.createStart);
-        this.createEvent.start = min;
-        this.createEvent.end = max;
+      // This function is called every time the mouse is moved
+      // It is however required for using drag to specify the length of an event
+      // Adding conditional if to only call this when mousedown should stop so many renders
+      if (this.isMouseDown) {
+        const mouse = this.toTime(tms);
+        console.log(tms);
+        if (this.dragEvent && this.dragTime !== null) {
+          const start = this.dragEvent.start;
+          const end = this.dragEvent.end;
+          const duration = end - start;
+          const newStartTime = mouse - this.dragTime;
+          const newStart = this.roundTime(newStartTime);
+          const newEnd = newStart + duration;
+          this.dragEvent.start = newStart;
+          this.dragEvent.end = newEnd;
+        } else if (this.createEvent && this.createStart !== null) {
+          const mouseRounded = this.roundTime(mouse, false);
+          const min = Math.min(mouseRounded, this.createStart);
+          const max = Math.max(mouseRounded, this.createStart);
+          this.createEvent.start = min;
+          this.createEvent.end = max;
+        }
       }
     },
     endDrag() {
@@ -237,6 +253,7 @@ export default {
       this.createEvent = null;
       this.createStart = null;
       this.extendOriginal = null;
+      this.isMouseDown = false;
     },
     cancelDrag() {
       if (this.createEvent) {
@@ -317,9 +334,19 @@ export default {
     // Closing the Dialogue
     closeDialogue() {
       this.selectedOpen = false;
+    },
+    // Creating events with data passed from CalCreateEvent
+    createNewEvent(stateDate, startTime, endDate, EndTime, name, category, color) {
+      const events = [];
+      events.push({
+        name: name,
+        start: first,
+        end: second,
+        color: this.colors[this.rnd(0, this.colors.length - 1)],
+        timed: !allDay,
+      });
     }
   },
-  components: { CalDialogue },
 };
 </script>
 

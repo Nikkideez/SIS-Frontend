@@ -17,18 +17,14 @@
       <span v-html="selectedEvent.details"></span>
     </v-card-text>
     <v-card-actions>
-      <v-btn text color="secondary" @click="closeDialogue">
-        Cancel
-      </v-btn>
+      <v-btn text color="secondary" @click="closeDialogue"> Cancel </v-btn>
     </v-card-actions>
   </v-card>
 </template>
 
 <script>
 export default {
-  name: 'CalDialogue',
-  props: ['selectedEvent', 'closeDialogue']
-
-
-}
+  name: "CalDialogue",
+  props: ["selectedEvent", "closeDialogue"],
+};
 </script>

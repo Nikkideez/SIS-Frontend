@@ -113,7 +113,7 @@ export default {
           to: '/calendar',
         }
       ],
-      miniVariant: false,
+      miniVariant: true,
       right: true,
       rightDrawer: false,
       title: 'Vuetify.js'
