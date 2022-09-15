@@ -75,7 +75,7 @@
           <v-btn color="blue darken-1" text @click="dialog = false">
             Close
           </v-btn>
-          <v-btn color="blue darken-1" text @click="consoleData"> Save </v-btn>
+          <v-btn color="blue darken-1" text @click="passEventData"> Save </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -108,13 +108,21 @@ export default {
       console.log(data);
     },
     consoleData() {
-      console.log(this.startDate);
-      console.log(this.startTime);
-      console.log(this.endDate);
-      console.log(this.endTime);
+
+      console.log(startDate);
+      console.log(endDate);
       console.log(this.name);
       console.log(this.category);
       console.log(this.location);
+    },
+    passEventData() {
+      const start = new Date(this.startDate + 'T' + this.startTime);
+      const end = new Date(this.endDate + 'T' + this.endTime);
+      console.log(start);
+      console.log(end);
+      console.log(this.name);
+      this.$emit('emitCreateEvent', this.name, start, end);
+      this.dialog = false;
     },
     setStartDate(date) {
       this.startDate = date;
