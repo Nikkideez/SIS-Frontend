@@ -25,7 +25,13 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/route',
+    // {src: '~/plugins/token.js', ssr: false}
   ],
+
+  router: {
+    middleware: "auth"
+  },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
@@ -40,12 +46,33 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/firebase',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
     baseURL: '/',
+  },
+
+  firebase: {
+    config: {
+      apiKey: "AIzaSyDyofEtDwfuNd1jP9X-OwuI5LAZl1GcScM",
+      authDomain: "autocal-eaad3.firebaseapp.com",
+      projectId: "autocal-eaad3",
+      storageBucket: "autocal-eaad3.appspot.com",
+      messagingSenderId: "609291140841",
+      appId: "1:609291140841:web:6bc6f6882a1db681e03a78",
+      measurementId: "G-GKGTBKL064"
+    },
+    services: {
+      // Enable Firebase Authentication Check https://firebase.nuxtjs.org/guide/options for More Services
+      auth: {
+        initialize: {
+          onAuthStateChangedMutation: 'ON_AUTH_STATE_CHANGED_MUTATION',
+        },
+      }
+    }
   },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
