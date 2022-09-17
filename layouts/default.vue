@@ -103,20 +103,30 @@ export default {
           to: '/'
         },
         {
-          icon: 'mdi-chart-bubble',
-          title: 'Inspire',
-          to: '/inspire'
+          icon: 'mdi-home-circle',
+          title: 'Splash',
+          to: '/welcome'
         },
         {
           icon: 'mdi-calendar',
           title: 'calendar',
           to: '/calendar',
-        }
+        },
+        {
+          icon: 'mdi-account-circle',
+          title: 'Profile',
+          to: '/profile'
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Inspire',
+          to: '/inspire'
+        },
       ],
       miniVariant: true,
       right: true,
       rightDrawer: false,
-      title: 'Vuetify.js'
+      title: 'AutoCal'
     }
   }
 }
