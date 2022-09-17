@@ -11,8 +11,8 @@ export const mutations = {
     if (!authUser) {
       state.user = null;
     } else {
-      const { uid, email, displayName } = authUser;
-      state.user = { uid, email, displayName };
+      const { id, email, displayName } = authUser;
+      state.user = { id, email, displayName };
     }
   }
 }

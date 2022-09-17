@@ -122,6 +122,8 @@
 </template>
 
 <script>
+import { doc, setDoc } from "firebase/firestore"
+
 export default {
   name: 'SignUp',
   data: () => ({
@@ -139,7 +141,24 @@ export default {
         await this.$fire.auth.createUserWithEmailAndPassword(
           this.email,
           this.password
-        )
+        ).then((user) => {
+          console.log(user.user)
+          console.log(user.user.uid)
+          this.createUserProfile(user.user.uid)
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async createUserProfile(uid) {
+      try {
+        setDoc(doc(this.$fire.firestore, "users", uid), {
+          firstName: this.firstName,
+          lastName: this.lastName,
+          uid: uid
+        }).then(() => {
+          this.$router.push({ name: 'dashboard' })
+        });
       } catch (e) {
         console.log(e)
       }

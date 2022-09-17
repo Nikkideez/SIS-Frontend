@@ -2,7 +2,7 @@
 <v-row>
     <v-col cols="12" md="6">
       <v-card-text class="mt-12">
-        <h4 class="text-center">Login in to Your Account {{$store.state.counter}}</h4>
+        <h4 class="text-center">Login in to Your Account</h4>
         <h6 class="text-center grey--text">
           Log in to your account so you can continue modifying
           <br />and organising your calendar
