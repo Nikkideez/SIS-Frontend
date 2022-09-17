@@ -71,7 +71,8 @@ export default {
         initialize: {
           onAuthStateChangedMutation: 'ON_AUTH_STATE_CHANGED_MUTATION',
         },
-      }
+      },
+      firestore: true
     }
   },
 
