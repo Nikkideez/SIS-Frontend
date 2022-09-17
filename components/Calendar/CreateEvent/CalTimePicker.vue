@@ -43,7 +43,7 @@ export default {
     // Save the time and pass it back to the parent
     saveBtn(ref) {
       ref.save(this.time);
-      this.$emit('passTime', this.time);
+      this.$emit('passTime', this.time, this.color);
     }
   }
 };
