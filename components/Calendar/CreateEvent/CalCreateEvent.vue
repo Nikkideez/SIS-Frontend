@@ -66,6 +66,14 @@
                   v-model="location"
                 ></v-text-field>
               </v-col>
+              <!-- Color ----------------------------------->
+              <v-col cols="12">
+                <v-select
+                  :items="colors"
+                  v-model="color"
+                  label="Color"
+                ></v-select>
+              </v-col>
             </v-row>
           </v-container>
           <small>*indicates required field</small>
@@ -75,7 +83,9 @@
           <v-btn color="blue darken-1" text @click="dialog = false">
             Close
           </v-btn>
-          <v-btn color="blue darken-1" text @click="passEventData"> Save </v-btn>
+          <v-btn color="blue darken-1" text @click="passEventData">
+            Save
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -102,13 +112,22 @@ export default {
     categories: ["Health", "Sleep", "Work", "Relax", "Education"],
     category: "",
     location: "",
+    colors: [
+      "blue",
+      "indigo",
+      "deep-purple",
+      "cyan",
+      "green",
+      "orange",
+      "grey darken-1",
+    ],
+    color: "",
   }),
   methods: {
     debug(data) {
       console.log(data);
     },
     consoleData() {
-
       console.log(startDate);
       console.log(endDate);
       console.log(this.name);
@@ -116,12 +135,12 @@ export default {
       console.log(this.location);
     },
     passEventData() {
-      const start = new Date(this.startDate + 'T' + this.startTime);
-      const end = new Date(this.endDate + 'T' + this.endTime);
+      const start = new Date(this.startDate + "T" + this.startTime);
+      const end = new Date(this.endDate + "T" + this.endTime);
       console.log(start);
       console.log(end);
       console.log(this.name);
-      this.$emit('emitCreateEvent', this.name, start, end);
+      this.$emit("emitCreateEvent", this.name, start, end, this.category, this.location, this.color);
       this.dialog = false;
     },
     setStartDate(date) {

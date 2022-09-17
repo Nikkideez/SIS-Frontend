@@ -119,13 +119,16 @@ export default {
         color: "orange",
         start: "2022-09-15 04:24:00",
         end: "2022-09-15 09:24:00",
+        category: "Health",
         name: "test",
         timed: false,
+        
       },
       {
         color: "blue",
         start: "2022-09-16 09:24:00",
         end: "2022-09-16 18:24:00",
+        category: "Health",
         name: "test",
         timed: false,
       },
@@ -166,7 +169,7 @@ export default {
   },
   methods: {
     viewDay({ date }) {
-      console.log("viewDay");
+      // console.log("viewDay");
       this.value = date;
       this.type = "day";
     },
@@ -178,21 +181,21 @@ export default {
     // },
     // For Today btn
     setToday() {
-      console.log("setToday");
+      // console.log("setToday");
       this.value = "";
     },
     // Prev btn
     prev() {
-      console.log("prev");
+      // console.log("prev");
       this.$refs.calendar.prev();
     },
     // Next btn
     next() {
-      console.log("next");
+      // console.log("next");
       this.$refs.calendar.next();
     },
     showEvent({ nativeEvent, event }) {
-      console.log("showevent");
+      // console.log("showevent");
       const open = () => {
         this.selectedEvent = event;
         this.selectedElement = nativeEvent.target;
@@ -212,32 +215,32 @@ export default {
       console.log(event);
     },
     rnd(a, b) {
-      console.log("rnd");
+      // console.log("rnd");
       return Math.floor((b - a + 1) * Math.random()) + a;
     },
     startDrag({ event, timed }) {
-      console.log("startDrag");
+      // console.log("startDrag");
       if (event && timed) {
         this.dragEvent = event;
-        console.log(event);
+        // console.log(event);
         this.dragTime = null;
         this.extendOriginal = null;
       }
     },
     startTime(tms) {
       this.isMouseDown = true;
-      console.log("startTime");
+      // console.log("startTime");
       const mouse = this.toTime(tms);
       // This if statement activates when you click on an existing event
       // And want to move it with your mouse
       if (this.dragEvent && this.dragTime === null) {
-        console.log("startTime 1");
+        // console.log("startTime 1");
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
         // Otherwise this statement activates when you click into the calender
         // And it creates a new event
       } else {
-        console.log("startTime 2");
+        // console.log("startTime 2");
         this.createStart = this.roundTime(mouse);
         // createEvent is the object which holds a single events details.
         // adding more keys to this object will correlate to the data which an event holds
@@ -253,7 +256,7 @@ export default {
       }
     },
     extendBottom(event) {
-      console.log("extendBottom");
+      // console.log("extendBottom");
       this.isMouseDown = true;
       this.createEvent = event;
       this.createStart = event.start;
@@ -279,7 +282,7 @@ export default {
           this.dragEvent.end = newEnd;
           // This event activates when you create a new event and want to drag the time
         } else if (this.createEvent && this.createStart !== null) {
-          console.log("mouseMove2");
+          // console.log("mouseMove2");
           const mouseRounded = this.roundTime(mouse, false);
           //I dont think think the min event is necessary here, could be wrong though
           // Calendar still works even though I commented it out
@@ -291,7 +294,7 @@ export default {
       }
     },
     endDrag() {
-      console.log("endDrag");
+      // console.log("endDrag");
       this.dragTime = null;
       this.dragEvent = null;
       this.createEvent = null;
@@ -304,20 +307,20 @@ export default {
     // I removed the event listener on calendar because its really annoying and it kept deleting events
     cancelDrag() {
       if (this.createEvent) {
-        console.log("cancelDrag 1");
+        // console.log("cancelDrag 1");
         if (this.extendOriginal) {
-          console.log("cancelDrag 2");
+          // console.log("cancelDrag 2");
           this.createEvent.end = this.extendOriginal;
         } else {
-          console.log("cancelDrag 3");
+          // console.log("cancelDrag 3");
           const i = this.events.indexOf(this.createEvent);
           if (i !== -1) {
-            console.log("cancelDrag 4");
+            // console.log("cancelDrag 4");
             this.events.splice(i, 1);
           }
         }
       }
-      console.log(this.events);
+      // console.log(this.events);
       this.createEvent = null;
       this.createStart = null;
       this.dragTime = null;
@@ -346,7 +349,7 @@ export default {
       this.rawEvents.forEach((event) => {
         const start = new Date(event.start);
         const end = new Date(event.end);
-        this.createNewEvent(event.name, start, end, event.color)
+        this.createNewEvent(event.name, start, end, event.category, "", event.color)
       });
     },
     // getEventColor(event) {
@@ -401,15 +404,17 @@ export default {
     closeDialogue() {
       this.selectedOpen = false;
     },
-    // Creating events with data passed from CalCreateEvent
-    createNewEvent(name, startDate, endDate, color = this.colors[1]) {
+    // Function to create events into the calendar
+    createNewEvent(name, startDate, endDate, category, location = "", color = this.colors[1]) {
       console.log("createNewEvent");
       this.createEvent = {
         name: name,
         start: this.roundTime(startDate),
         end: this.roundTime(endDate),
+        category: category,
+        location: location,
         color: color,
-        timed: true,
+        timed: true
       };
       console.log(this.createEvent);
       this.events.push(this.createEvent);
