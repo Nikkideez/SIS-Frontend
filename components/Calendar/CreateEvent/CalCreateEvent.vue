@@ -23,6 +23,7 @@
               <v-col cols="12" sm="6" md="6">
                 <CalDatePicker
                   menu-label="Start Date"
+                  :initial-date="startDate"
                   @passDate="setStartDate"
                 />
               </v-col>
@@ -30,16 +31,25 @@
               <v-col cols="12" sm="6" md="6">
                 <CalTimePicker
                   menu-label="Start Time"
+                  :initial-time="startTime"
                   @passTime="setStartTime"
                 />
               </v-col>
               <!-- Picking the End Date ----------------------->
               <v-col cols="12" sm="6" md="6">
-                <CalDatePicker menu-label="End Date" @passDate="setEndDate" />
+                <CalDatePicker
+                  menu-label="End Date"
+                  @passDate="setEndDate"
+                  :initial-date="endDate"
+                />
               </v-col>
               <!-- Picking the End Time (This can be improved I know)-->
               <v-col cols="12" sm="6" md="6">
-                <CalTimePicker menu-label="End Time" @passTime="setEndTime" />
+                <CalTimePicker
+                  menu-label="End Time"
+                  @passTime="setEndTime"
+                  :initial-time="endTime"
+                />
               </v-col>
               <!-- Name --------------------------------------->
               <v-col cols="12">
@@ -80,9 +90,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="dialog = false">
-            Close
-          </v-btn>
+          <v-btn color="blue darken-1" text @click="handleClose"> Close </v-btn>
           <v-btn color="blue darken-1" text @click="passEventData">
             Save
           </v-btn>
@@ -97,16 +105,19 @@ import CalDatePicker from "./CalDatePicker.vue";
 import CalTimePicker from "./CalTimePicker.vue";
 export default {
   name: "CalCreateEvent",
-  props: ["selectedEvent", "closeDialogue"],
+  props: ["selectedEvent", "closeDialogue", "openCreateEvent"],
   components: { CalDatePicker, CalTimePicker },
   data: () => ({
     dialog: false,
     time: null,
     menu2: false,
     modal2: false,
+    currentDate: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+      .toISOString()
+      .substring(0, 10),
     startDate: null,
-    startTime: null,
     endDate: null,
+    startTime: null,
     endTime: null,
     name: "",
     categories: ["Health", "Sleep", "Work", "Relax", "Education"],
@@ -122,31 +133,56 @@ export default {
       "grey darken-1",
     ],
     color: "",
+    testValue: null,
   }),
+  mounted() {
+    this.$nextTick(function () {
+      const start = new Date(
+        Date.now() - new Date().getTimezoneOffset() * 60000
+      ).toISOString();
+      const end = start;
+      this.setAllDates(start, end);
+    });
+  },
   methods: {
     debug(data) {
       console.log(data);
     },
-    consoleData() {
-      console.log(startDate);
-      console.log(endDate);
-      console.log(this.name);
-      console.log(this.category);
-      console.log(this.location);
-    },
     passEventData() {
       const start = new Date(this.startDate + "T" + this.startTime);
       const end = new Date(this.endDate + "T" + this.endTime);
+      // console.log(this.startDate)
+      // console.log(this.endDate)
+      // console.log(this.startTime)
+      // console.log(this.endTime)
       console.log(start);
       console.log(end);
       console.log(this.name);
-      this.$emit("emitCreateEvent", this.name, start, end, this.category, this.location, this.color);
+      this.$emit(
+        "emitCreateEvent",
+        this.name,
+        start,
+        end,
+        this.category,
+        this.location,
+        this.color
+      );
       this.dialog = false;
     },
+    setAllDates(start, end) {
+      console.log('setAllDates');
+      this.startDate = start.substring(0, 10);
+      this.startTime = start.substring(11, 16);
+      this.endDate = end.substring(0, 10);
+      this.endTime = end.substring(11, 16);
+    },
     setStartDate(date) {
+      // console.log(date)
       this.startDate = date;
+      // console.log(this.startDate)
     },
     setStartTime(time) {
+      // console.log(time)
       this.startTime = time;
     },
     setEndDate(date) {
@@ -154,6 +190,28 @@ export default {
     },
     setEndTime(time) {
       this.endTime = time;
+    },
+    handleOpen() {
+      this.dialog = !this.dialog;
+    },
+    handleClose() {
+      // emitCancelEvent should only be called if createEvent is not null (drag n drop functionality was used to create the event)
+      this.$emit("emitCancelEvent");
+      // this.$refs.datePickerRef.reInitialiseTime();
+      this.dialog = false;
+    },
+    handleNewEvent(createEvent) {
+      console.log("working!!!");
+      const start = new Date(createEvent.start - new Date().getTimezoneOffset() * 60000).toISOString();
+      const end = new Date(createEvent.end - new Date().getTimezoneOffset() * 60000).toISOString();
+      this.setAllDates(start, end);
+      console.log(this.startDate);
+      console.log(this.startTime);
+      // console.log(this.$refs);
+      // this.$refs.datePickerRef.changeDate(createEvent.start);
+      // this.startDate = createEvent.start;
+      // console.log(createEvent.start);
+      // this.endDate = createEvent.end;
     },
   },
 };

@@ -32,18 +32,33 @@
 <script>
 export default {
     name: 'CalTimePicker',
-    props: ['menuLabel'],
+    props: ['menuLabel', 'initialTime'],
   data() {
     return {
-      time: null,
+      time: this.initialTime,
       menu2: false,
     };
+  },
+  mounted() {
+    this.$nextTick(function () {
+      this.$emit('passTime', this.time);
+    });
+  },
+  watch: {
+    initialTime: function () {
+      console.log("watcher called")
+      this.time = this.initialTime
+    }
   },
   methods: {
     // Save the time and pass it back to the parent
     saveBtn(ref) {
       ref.save(this.time);
-      this.$emit('passTime', this.time, this.color);
+      console.log(this.time);
+      this.$emit('passTime', this.time);
+    },
+    reInitialiseTime() {
+      this.time = this.initialTime;
     }
   }
 };

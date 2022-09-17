@@ -7,9 +7,21 @@
           <!-- <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Create Event
           </v-btn> -->
-          <CalCreateEvent @emitCreateEvent="createNewEvent" />
+          <CalCreateEvent
+            @emitCreateEvent="createNewEvent"
+            @emitCancelEvent="cancelDrag"
+            ref="createEventRef"
+          />
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Today
+          </v-btn>
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="sendCalendarEvents"
+          >
+            Send Events
           </v-btn>
           <v-btn fab text small color="grey darken-2" @click="prev">
             <v-icon small> mdi-chevron-left </v-icon>
@@ -96,6 +108,8 @@
 <script>
 import CalMenu from "./CalMenu.vue";
 import CalCreateEvent from "./CreateEvent/CalCreateEvent.vue";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+
 export default {
   name: "CalendarApp",
   components: { CalMenu, CalCreateEvent },
@@ -112,27 +126,6 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false, //Decides whether the dialogue should be open or not
-    testDate: new Date(),
-    // Events before they are passed into the calendar (probs something like what we will recieve)
-    rawEvents: [ 
-      {
-        color: "orange",
-        start: "2022-09-15 04:24:00",
-        end: "2022-09-15 09:24:00",
-        category: "Health",
-        name: "test",
-        timed: false,
-        
-      },
-      {
-        color: "blue",
-        start: "2022-09-16 09:24:00",
-        end: "2022-09-16 18:24:00",
-        category: "Health",
-        name: "test",
-        timed: false,
-      },
-    ],
     events: [], // Object that holds all events
     colors: [
       "blue",
@@ -143,29 +136,33 @@ export default {
       "orange",
       "grey darken-1",
     ],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party",
-    ],
+    // names: [
+    //   "Meeting",
+    //   "Holiday",
+    //   "PTO",
+    //   "Travel",
+    //   "Event",
+    //   "Birthday",
+    //   "Conference",
+    //   "Party",
+    // ],
     dragEvent: null,
     dragStart: null,
     createEvent: null,
     createStart: null,
     extendOriginal: null,
     isMouseDown: false,
+    // date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    //   .toISOString()
+    //   .substr(0, 10),
   }),
   mounted() {
     console.log("mounted");
     this.$refs.calendar.checkChange();
     this.$nextTick(function () {
-      this.getEvents();
-  })
+      this.getUserEvents();
+      // this.getEvents();
+    });
   },
   methods: {
     viewDay({ date }) {
@@ -295,27 +292,36 @@ export default {
     },
     endDrag() {
       // console.log("endDrag");
+      console.log(this.createEvent)
+      // console.log(this.$refs)
+      if(this.createEvent) {
+        this.$refs.createEventRef.handleNewEvent(this.createEvent);
+        this.$refs.createEventRef.handleOpen();
+      }
       this.dragTime = null;
       this.dragEvent = null;
       this.createEvent = null;
       this.createStart = null;
       this.extendOriginal = null;
       this.isMouseDown = false;
+      // this.openCreateEvent = true;
     },
     // This event cancels the last event that was created
     // The initial functionality was to cancel everytime your mouse leaves
     // I removed the event listener on calendar because its really annoying and it kept deleting events
     cancelDrag() {
+      console.log("cancelDrag")
+      console.log(this.createEvent)
       if (this.createEvent) {
-        // console.log("cancelDrag 1");
+        console.log("cancelDrag 1");
         if (this.extendOriginal) {
-          // console.log("cancelDrag 2");
+          console.log("cancelDrag 2");
           this.createEvent.end = this.extendOriginal;
         } else {
-          // console.log("cancelDrag 3");
+          console.log("cancelDrag 3");
           const i = this.events.indexOf(this.createEvent);
           if (i !== -1) {
-            // console.log("cancelDrag 4");
+            console.log("cancelDrag 4");
             this.events.splice(i, 1);
           }
         }
@@ -345,13 +351,21 @@ export default {
         tms.minute
       ).getTime();
     },
-    getEvents() {
-      this.rawEvents.forEach((event) => {
-        const start = new Date(event.start);
-        const end = new Date(event.end);
-        this.createNewEvent(event.name, start, end, event.category, "", event.color)
-      });
-    },
+    // gets the raw data and puts it into the calendar.
+    // getEvents() {
+    //   this.rawEvents.forEach((event) => {
+    //     const start = new Date(event.start);
+    //     const end = new Date(event.end);
+    //     this.createNewEvent(
+    //       event.name,
+    //       start,
+    //       end,
+    //       event.category,
+    //       "",
+    //       event.color
+    //     );
+    //   });
+    // },
     // getEventColor(event) {
     //   const rgb = parseInt(event.color.substring(1), 16);
     //   const r = (rgb >> 16) & 255;
@@ -405,7 +419,14 @@ export default {
       this.selectedOpen = false;
     },
     // Function to create events into the calendar
-    createNewEvent(name, startDate, endDate, category, location = "", color = this.colors[1]) {
+    createNewEvent(
+      name,
+      startDate = this.date,
+      endDate = this.date,
+      category,
+      location = "",
+      color = this.colors[1]
+    ) {
       console.log("createNewEvent");
       this.createEvent = {
         name: name,
@@ -414,10 +435,33 @@ export default {
         category: category,
         location: location,
         color: color,
-        timed: true
+        timed: true,
       };
       console.log(this.createEvent);
       this.events.push(this.createEvent);
+    },
+    // Sending events to the firestore database
+    async sendCalendarEvents() {
+      console.log(this.events);
+      try {
+        await setDoc(doc(this.$fire.firestore, "events", "test"), {
+          events: this.events,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    // Get user events from database and add them to events array
+    async getUserEvents() {
+      const docRef = doc(this.$fire.firestore, "events", "test");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        console.log(docSnap.data().events);
+        this.events.push(...docSnap.data().events);
+        console.log(this.events);
+      } else {
+        console.log("No events bro :-(");
+      }
     },
   },
 };
@@ -459,15 +503,21 @@ export default {
   &:hover::after {
     display: block;
   }
-
 }
+
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 </style>
