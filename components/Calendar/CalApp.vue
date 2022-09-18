@@ -89,17 +89,20 @@
           </template>
         </v-calendar>
         <!-- Dialogue that appears when you click on an event -->
-        <v-menu
+        <!-- <v-menu
           v-model="selectedOpen"
           :close-on-content-click="false"
           :activator="selectedElement"
           offset-x
-        >
+        > -->
           <CalMenu
+            v-model="selectedOpen"
             :selectedEvent="selectedEvent"
             :closeDialogue="closeDialogue"
+            :activator="selectedElement"
+            offset-x
           />
-        </v-menu>
+        <!-- </v-menu> -->
       </v-sheet>
     </v-col>
   </v-row>
