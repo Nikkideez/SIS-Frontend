@@ -7,9 +7,21 @@
           <!-- <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Create Event
           </v-btn> -->
-          <CalCreateEvent @emitCreateEvent="createNewEvent" />
+          <CalCreateEvent
+            @emitCreateEvent="createNewEvent"
+            @emitCancelEvent="cancelDrag"
+            ref="createEventRef"
+          />
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Today
+          </v-btn>
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="sendCalendarEvents"
+          >
+            Send Events
           </v-btn>
           <v-btn fab text small color="grey darken-2" @click="prev">
             <v-icon small> mdi-chevron-left </v-icon>
@@ -96,6 +108,8 @@
 <script>
 import CalMenu from "./CalMenu.vue";
 import CalCreateEvent from "./CreateEvent/CalCreateEvent.vue";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+
 export default {
   name: "CalendarApp",
   components: { CalMenu, CalCreateEvent },
@@ -112,24 +126,6 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false, //Decides whether the dialogue should be open or not
-    testDate: new Date(),
-    // Events before they are passed into the calendar (probs something like what we will recieve)
-    rawEvents: [ 
-      {
-        color: "orange",
-        start: "2022-09-15 04:24:00",
-        end: "2022-09-15 09:24:00",
-        name: "test",
-        timed: false,
-      },
-      {
-        color: "blue",
-        start: "2022-09-16 09:24:00",
-        end: "2022-09-16 18:24:00",
-        name: "test",
-        timed: false,
-      },
-    ],
     events: [], // Object that holds all events
     colors: [
       "blue",
@@ -140,33 +136,37 @@ export default {
       "orange",
       "grey darken-1",
     ],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party",
-    ],
+    // names: [
+    //   "Meeting",
+    //   "Holiday",
+    //   "PTO",
+    //   "Travel",
+    //   "Event",
+    //   "Birthday",
+    //   "Conference",
+    //   "Party",
+    // ],
     dragEvent: null,
     dragStart: null,
     createEvent: null,
     createStart: null,
     extendOriginal: null,
     isMouseDown: false,
+    // date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
+    //   .toISOString()
+    //   .substr(0, 10),
   }),
   mounted() {
     console.log("mounted");
     this.$refs.calendar.checkChange();
     this.$nextTick(function () {
-      this.getEvents();
-  })
+      this.getUserEvents();
+      // this.getEvents();
+    });
   },
   methods: {
     viewDay({ date }) {
-      console.log("viewDay");
+      // console.log("viewDay");
       this.value = date;
       this.type = "day";
     },
@@ -178,21 +178,21 @@ export default {
     // },
     // For Today btn
     setToday() {
-      console.log("setToday");
+      // console.log("setToday");
       this.value = "";
     },
     // Prev btn
     prev() {
-      console.log("prev");
+      // console.log("prev");
       this.$refs.calendar.prev();
     },
     // Next btn
     next() {
-      console.log("next");
+      // console.log("next");
       this.$refs.calendar.next();
     },
     showEvent({ nativeEvent, event }) {
-      console.log("showevent");
+      // console.log("showevent");
       const open = () => {
         this.selectedEvent = event;
         this.selectedElement = nativeEvent.target;
@@ -212,32 +212,32 @@ export default {
       console.log(event);
     },
     rnd(a, b) {
-      console.log("rnd");
+      // console.log("rnd");
       return Math.floor((b - a + 1) * Math.random()) + a;
     },
     startDrag({ event, timed }) {
-      console.log("startDrag");
+      // console.log("startDrag");
       if (event && timed) {
         this.dragEvent = event;
-        console.log(event);
+        // console.log(event);
         this.dragTime = null;
         this.extendOriginal = null;
       }
     },
     startTime(tms) {
       this.isMouseDown = true;
-      console.log("startTime");
+      // console.log("startTime");
       const mouse = this.toTime(tms);
       // This if statement activates when you click on an existing event
       // And want to move it with your mouse
       if (this.dragEvent && this.dragTime === null) {
-        console.log("startTime 1");
+        // console.log("startTime 1");
         const start = this.dragEvent.start;
         this.dragTime = mouse - start;
         // Otherwise this statement activates when you click into the calender
         // And it creates a new event
       } else {
-        console.log("startTime 2");
+        // console.log("startTime 2");
         this.createStart = this.roundTime(mouse);
         // createEvent is the object which holds a single events details.
         // adding more keys to this object will correlate to the data which an event holds
@@ -253,7 +253,7 @@ export default {
       }
     },
     extendBottom(event) {
-      console.log("extendBottom");
+      // console.log("extendBottom");
       this.isMouseDown = true;
       this.createEvent = event;
       this.createStart = event.start;
@@ -279,7 +279,7 @@ export default {
           this.dragEvent.end = newEnd;
           // This event activates when you create a new event and want to drag the time
         } else if (this.createEvent && this.createStart !== null) {
-          console.log("mouseMove2");
+          // console.log("mouseMove2");
           const mouseRounded = this.roundTime(mouse, false);
           //I dont think think the min event is necessary here, could be wrong though
           // Calendar still works even though I commented it out
@@ -291,18 +291,27 @@ export default {
       }
     },
     endDrag() {
-      console.log("endDrag");
+      // console.log("endDrag");
+      console.log(this.createEvent)
+      // console.log(this.$refs)
+      if(this.createEvent) {
+        this.$refs.createEventRef.handleNewEvent(this.createEvent);
+        this.$refs.createEventRef.handleOpen();
+      }
       this.dragTime = null;
       this.dragEvent = null;
       this.createEvent = null;
       this.createStart = null;
       this.extendOriginal = null;
       this.isMouseDown = false;
+      // this.openCreateEvent = true;
     },
     // This event cancels the last event that was created
     // The initial functionality was to cancel everytime your mouse leaves
     // I removed the event listener on calendar because its really annoying and it kept deleting events
     cancelDrag() {
+      console.log("cancelDrag")
+      console.log(this.createEvent)
       if (this.createEvent) {
         console.log("cancelDrag 1");
         if (this.extendOriginal) {
@@ -317,7 +326,7 @@ export default {
           }
         }
       }
-      console.log(this.events);
+      // console.log(this.events);
       this.createEvent = null;
       this.createStart = null;
       this.dragTime = null;
@@ -342,13 +351,21 @@ export default {
         tms.minute
       ).getTime();
     },
-    getEvents() {
-      this.rawEvents.forEach((event) => {
-        const start = new Date(event.start);
-        const end = new Date(event.end);
-        this.createNewEvent(event.name, start, end, event.color)
-      });
-    },
+    // gets the raw data and puts it into the calendar.
+    // getEvents() {
+    //   this.rawEvents.forEach((event) => {
+    //     const start = new Date(event.start);
+    //     const end = new Date(event.end);
+    //     this.createNewEvent(
+    //       event.name,
+    //       start,
+    //       end,
+    //       event.category,
+    //       "",
+    //       event.color
+    //     );
+    //   });
+    // },
     // getEventColor(event) {
     //   const rgb = parseInt(event.color.substring(1), 16);
     //   const r = (rgb >> 16) & 255;
@@ -401,18 +418,50 @@ export default {
     closeDialogue() {
       this.selectedOpen = false;
     },
-    // Creating events with data passed from CalCreateEvent
-    createNewEvent(name, startDate, endDate, color = this.colors[1]) {
+    // Function to create events into the calendar
+    createNewEvent(
+      name,
+      startDate = this.date,
+      endDate = this.date,
+      category,
+      location = "",
+      color = this.colors[1]
+    ) {
       console.log("createNewEvent");
       this.createEvent = {
         name: name,
         start: this.roundTime(startDate),
         end: this.roundTime(endDate),
+        category: category,
+        location: location,
         color: color,
         timed: true,
       };
       console.log(this.createEvent);
       this.events.push(this.createEvent);
+    },
+    // Sending events to the firestore database
+    async sendCalendarEvents() {
+      console.log(this.events);
+      try {
+        await setDoc(doc(this.$fire.firestore, "events", "test"), {
+          events: this.events,
+        });
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    // Get user events from database and add them to events array
+    async getUserEvents() {
+      const docRef = doc(this.$fire.firestore, "events", "test");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        console.log(docSnap.data().events);
+        this.events.push(...docSnap.data().events);
+        console.log(this.events);
+      } else {
+        console.log("No events bro :-(");
+      }
     },
   },
 };
@@ -454,15 +503,21 @@ export default {
   &:hover::after {
     display: block;
   }
-
 }
+
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Old versions of Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
 </style>
