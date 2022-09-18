@@ -225,13 +225,13 @@ export default {
         createEvent.end - new Date().getTimezoneOffset() * 60000
       ).toISOString();
       this.setAllDates(start, end);
-      console.log(this.startDate);
-      console.log(this.startTime);
-      // console.log(this.$refs);
-      // this.$refs.datePickerRef.changeDate(createEvent.start);
-      // this.startDate = createEvent.start;
-      // console.log(createEvent.start);
-      // this.endDate = createEvent.end;
+      // console.log(this.startDate);
+      // console.log(this.startTime);
+      // // console.log(this.$refs);
+      // // this.$refs.datePickerRef.changeDate(createEvent.start);
+      // // this.startDate = createEvent.start;
+      // // console.log(createEvent.start);
+      // // this.endDate = createEvent.end;
     },
   },
 };
