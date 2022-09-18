@@ -36,12 +36,12 @@ export default {
       menu: false,
     };
   },
-  mounted() {
-    this.$nextTick(function () {
-      // this.$emit('passDate', this.date);
-      console.log(this.initialDate);
-    });
-  },
+  // mounted() {
+  //   this.$nextTick(function () {
+  //     // this.$emit('passDate', this.date);
+  //     console.log(this.initialDate);
+  //   });
+  // },
   watch: {
     initialDate: function () {
       this.date = this.initialDate;
@@ -53,9 +53,9 @@ export default {
       ref.save(this.date);
       this.$emit("passDate", this.date);
     },
-    changeDate(date) {
-      this.date = date;
-    },
+    // changeDate(date) {
+    //   this.date = date;
+    // },
   },
 };
 </script>

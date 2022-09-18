@@ -9,7 +9,8 @@
           </v-btn> -->
           <CalCreateEvent
             @emitCreateEvent="createNewEvent"
-            @emitCancelEvent="cancelDrag"
+            @emitCancelEvent="removeEvent"
+            @emitEditEvent="editEvent"
             ref="createEventRef"
           />
           <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
@@ -113,7 +114,6 @@ import { doc, setDoc, getDoc } from "firebase/firestore";
 export default {
   name: "CalendarApp",
   components: { CalMenu, CalCreateEvent },
-  // some data will be pulled from backend when connected
   data: () => ({
     value: "",
     type: "month",
@@ -136,25 +136,12 @@ export default {
       "orange",
       "grey darken-1",
     ],
-    // names: [
-    //   "Meeting",
-    //   "Holiday",
-    //   "PTO",
-    //   "Travel",
-    //   "Event",
-    //   "Birthday",
-    //   "Conference",
-    //   "Party",
-    // ],
     dragEvent: null,
     dragStart: null,
     createEvent: null,
     createStart: null,
     extendOriginal: null,
     isMouseDown: false,
-    // date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000)
-    //   .toISOString()
-    //   .substr(0, 10),
   }),
   mounted() {
     console.log("mounted");
@@ -259,10 +246,10 @@ export default {
       this.createStart = event.start;
       this.extendOriginal = event.end;
     },
+    // This function is called every time the mouse is moved and assists inputting time
+    // Mainly for clicking into calendar to create event and dragging functionality
     mouseMove(tms) {
       // console.log("mouseMove");
-      // This function is called every time the mouse is moved
-      // It is however required for using drag to specify the length of an event
       // Adding conditional if to only call this when mousedown should stop so many renders
       if (this.isMouseDown) {
         const mouse = this.toTime(tms);
@@ -292,9 +279,9 @@ export default {
     },
     endDrag() {
       // console.log("endDrag");
-      console.log(this.createEvent)
+      console.log(this.createEvent);
       // console.log(this.$refs)
-      if(this.createEvent) {
+      if (this.createEvent) {
         this.$refs.createEventRef.handleNewEvent(this.createEvent);
         this.$refs.createEventRef.handleOpen();
       }
@@ -309,9 +296,9 @@ export default {
     // This event cancels the last event that was created
     // The initial functionality was to cancel everytime your mouse leaves
     // I removed the event listener on calendar because its really annoying and it kept deleting events
-    cancelDrag() {
-      console.log("cancelDrag")
-      console.log(this.createEvent)
+    cancelDrag(createEvent) {
+      // console.log("cancelDrag")
+      // console.log(this.createEvent)
       if (this.createEvent) {
         console.log("cancelDrag 1");
         if (this.extendOriginal) {
@@ -332,6 +319,15 @@ export default {
       this.dragTime = null;
       this.dragEvent = null;
     },
+    // Removes an event from the events array
+    removeEvent(createEvent) {
+      const i = this.events.indexOf(createEvent);
+      if (i !== -1) {
+        console.log("cancelDrag 4");
+        this.events.splice(i, 1);
+      }
+    },
+    // Rounds time to nearest 30 mins
     roundTime(time, down = true) {
       // console.log("roundTime");
       const roundTo = 30; // minutes
@@ -341,6 +337,7 @@ export default {
         ? time - (time % roundDownTime)
         : time + (roundDownTime - (time % roundDownTime));
     },
+    // gets tms value and turns it into a date value to be passed into create event object
     toTime(tms) {
       // console.log("toTime");
       return new Date(
@@ -351,66 +348,11 @@ export default {
         tms.minute
       ).getTime();
     },
-    // gets the raw data and puts it into the calendar.
-    // getEvents() {
-    //   this.rawEvents.forEach((event) => {
-    //     const start = new Date(event.start);
-    //     const end = new Date(event.end);
-    //     this.createNewEvent(
-    //       event.name,
-    //       start,
-    //       end,
-    //       event.category,
-    //       "",
-    //       event.color
-    //     );
-    //   });
-    // },
-    // getEventColor(event) {
-    //   const rgb = parseInt(event.color.substring(1), 16);
-    //   const r = (rgb >> 16) & 255;
-    //   const g = (rgb >> 8) & 255;
-    //   const b = (rgb >> 0) & 255;
-    //   console.log("getEventColor");
-    //   return event === this.dragEvent
-    //     ? `rgba(${r}, ${g}, ${b}, 0.7)`
-    //     : event === this.createEvent
-    //     ? `rgba(${r}, ${g}, ${b}, 0.7)`
-    //     : event.color;
-    // },
-    // Will delete updateRange later, referencing it now as sample code to understand Vue
-    // updateRange help gets the events
-    // Right now its just getting a random number of event so this behavior needs to be changed
-    // updateRange({ start, end }) {
-    //   console.log("updateRange");
-    //   const events = [];
-    //   const min = new Date(`${start.date}T00:00:00`);
-    //   const max = new Date(`${end.date}T23:59:59`);
-    //   const days = (max.getTime() - min.getTime()) / 86400000;
-    //   const eventCount = this.rnd(days, days + 20);
-    //   for (let i = 0; i < eventCount; i++) {
-    //     const allDay = this.rnd(0, 3) === 0;
-    //     const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-    //     const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-    //     const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-    //     console.log(secondTimestamp)
-    //     const second = new Date(first.getTime() + secondTimestamp);
-    //     console.log(second)
-    //     events.push({
-    //       name: this.names[this.rnd(0, this.names.length - 1)],
-    //       start: first,
-    //       end: second,
-    //       color: this.colors[this.rnd(0, this.colors.length - 1)],
-    //       timed: !allDay,
-    //     });
-    //   }
-    //   this.events = events;
-    //   // events is the object that holds all the data for events
-    //   console.log(events);
-    // },
+    // Just gets some random number, might delete soon
     rnd(a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a;
     },
+    // Returns some random element(etc some random color). Not sure if we will need this but we will see
     rndElement(arr) {
       return arr[this.rnd(0, arr.length - 1)];
     },
@@ -439,6 +381,16 @@ export default {
       };
       console.log(this.createEvent);
       this.events.push(this.createEvent);
+    },
+    // Edit an existing event
+    editEvent(createEvent, name, start, end, category, location, color) {
+      const i = this.events.indexOf(createEvent);
+      this.events[i].name = name;
+      this.events[i].start = start;
+      this.events[i].end = end;
+      this.events[i].category = category;
+      this.events[i].location = location;
+      this.events[i].color = color;
     },
     // Sending events to the firestore database
     async sendCalendarEvents() {
