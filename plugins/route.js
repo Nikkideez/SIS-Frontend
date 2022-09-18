@@ -7,11 +7,8 @@ export default ({ app }) => {
 
   // WORKS BUT AFTER REROUTE, CHILD DIFFERENT TO SERVER -> FALL BACK TO CLIENT RENDER
   app.router.beforeEach((to, from, next) => {
-    console.log(to)
-    console.log(!['index', 'auth'].includes(to.name))
     if (!process.server && !['index', 'auth'].includes(to.name)) {   //Check if SSR and in landing page
       app.$fire.auth.onAuthStateChanged((user) => {
-        console.log(user)
         if (!user) {
           console.log("USER NOT LOGGED IN")
           next({ name: 'auth' })
