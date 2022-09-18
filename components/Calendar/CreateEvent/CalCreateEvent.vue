@@ -91,9 +91,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click="handleClose"> Close </v-btn>
-          <v-btn color="blue darken-1" text @click="passEventData">
-            Save
-          </v-btn>
+          <v-btn color="blue darken-1" text @click="handleSave"> Save </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -134,6 +132,7 @@ export default {
     ],
     color: "",
     testValue: null,
+    createEvent: null,
   }),
   mounted() {
     this.$nextTick(function () {
@@ -148,29 +147,42 @@ export default {
     debug(data) {
       console.log(data);
     },
-    passEventData() {
+    handleSave() {
       const start = new Date(this.startDate + "T" + this.startTime);
       const end = new Date(this.endDate + "T" + this.endTime);
       // console.log(this.startDate)
       // console.log(this.endDate)
       // console.log(this.startTime)
       // console.log(this.endTime)
-      console.log(start);
-      console.log(end);
-      console.log(this.name);
-      this.$emit(
-        "emitCreateEvent",
-        this.name,
-        start,
-        end,
-        this.category,
-        this.location,
-        this.color
-      );
+      // console.log(start);
+      // console.log(end);
+      // console.log(this.name);
+      if (this.createEvent) {
+        this.$emit(
+          "emitEditEvent",
+          this.createEvent,
+          this.name,
+          start,
+          end,
+          this.category,
+          this.location,
+          this.color
+        );
+      } else {
+        this.$emit(
+          "emitCreateEvent",
+          this.name,
+          start,
+          end,
+          this.category,
+          this.location,
+          this.color
+        );
+      }
       this.dialog = false;
     },
     setAllDates(start, end) {
-      console.log('setAllDates');
+      console.log("setAllDates");
       this.startDate = start.substring(0, 10);
       this.startTime = start.substring(11, 16);
       this.endDate = end.substring(0, 10);
@@ -196,14 +208,22 @@ export default {
     },
     handleClose() {
       // emitCancelEvent should only be called if createEvent is not null (drag n drop functionality was used to create the event)
-      this.$emit("emitCancelEvent");
+      if (this.createEvent) {
+        console.log("cancelEvent called");
+        this.$emit("emitCancelEvent", this.createEvent);
+      }
       // this.$refs.datePickerRef.reInitialiseTime();
       this.dialog = false;
     },
     handleNewEvent(createEvent) {
       console.log("working!!!");
-      const start = new Date(createEvent.start - new Date().getTimezoneOffset() * 60000).toISOString();
-      const end = new Date(createEvent.end - new Date().getTimezoneOffset() * 60000).toISOString();
+      this.createEvent = createEvent;
+      const start = new Date(
+        createEvent.start - new Date().getTimezoneOffset() * 60000
+      ).toISOString();
+      const end = new Date(
+        createEvent.end - new Date().getTimezoneOffset() * 60000
+      ).toISOString();
       this.setAllDates(start, end);
       console.log(this.startDate);
       console.log(this.startTime);
