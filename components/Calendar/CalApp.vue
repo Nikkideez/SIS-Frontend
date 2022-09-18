@@ -108,7 +108,7 @@
   </v-row>
 </template>
 
-<!-- Heaps of variables, objects and functions :-( -->
+<!-- Heaps of variables and functions ----------------------------------------------->
 <script>
 import CalMenu from "./CalMenu.vue";
 import CalCreateEvent from "./CreateEvent/CalCreateEvent.vue";
@@ -146,6 +146,8 @@ export default {
     extendOriginal: null,
     isMouseDown: false,
   }),
+
+  //Call getUserEvents on page load to populate the calendar with events from calendar
   mounted() {
     console.log("mounted");
     this.$refs.calendar.checkChange();
@@ -160,13 +162,13 @@ export default {
       this.value = date;
       this.type = "day";
     },
-    // Also have no idea what get event color does since colors are being passing into event
+    // Also have no idea what purpose getEventColor serves
     // getEventColor(event) {
     //   // console.log("getEventColor");
     //   console.log(this.events);
     //   return event.color;
     // },
-    // For Today btn
+    // Today btn
     setToday() {
       // console.log("setToday");
       this.value = "";
@@ -284,7 +286,7 @@ export default {
       // console.log("endDrag");
       console.log(this.createEvent);
       // console.log(this.$refs)
-      if (this.createEvent) {
+      if (this.createEvent && !this.extendOriginal) {
         this.$refs.createEventRef.handleNewEvent(this.createEvent);
         this.$refs.createEventRef.handleOpen();
       }
@@ -299,29 +301,29 @@ export default {
     // This event cancels the last event that was created
     // The initial functionality was to cancel everytime your mouse leaves
     // I removed the event listener on calendar because its really annoying and it kept deleting events
-    cancelDrag(createEvent) {
-      // console.log("cancelDrag")
-      // console.log(this.createEvent)
-      if (this.createEvent) {
-        console.log("cancelDrag 1");
-        if (this.extendOriginal) {
-          console.log("cancelDrag 2");
-          this.createEvent.end = this.extendOriginal;
-        } else {
-          console.log("cancelDrag 3");
-          const i = this.events.indexOf(this.createEvent);
-          if (i !== -1) {
-            console.log("cancelDrag 4");
-            this.events.splice(i, 1);
-          }
-        }
-      }
-      // console.log(this.events);
-      this.createEvent = null;
-      this.createStart = null;
-      this.dragTime = null;
-      this.dragEvent = null;
-    },
+    // cancelDrag(createEvent) {
+    //   // console.log("cancelDrag")
+    //   // console.log(this.createEvent)
+    //   if (this.createEvent) {
+    //     console.log("cancelDrag 1");
+    //     if (this.extendOriginal) {
+    //       console.log("cancelDrag 2");
+    //       this.createEvent.end = this.extendOriginal;
+    //     } else {
+    //       console.log("cancelDrag 3");
+    //       const i = this.events.indexOf(this.createEvent);
+    //       if (i !== -1) {
+    //         console.log("cancelDrag 4");
+    //         this.events.splice(i, 1);
+    //       }
+    //     }
+    //   }
+    //   // console.log(this.events);
+    //   this.createEvent = null;
+    //   this.createStart = null;
+    //   this.dragTime = null;
+    //   this.dragEvent = null;
+    // },
     // Removes an event from the events array
     removeEvent(createEvent) {
       const i = this.events.indexOf(createEvent);

@@ -28,6 +28,8 @@
       :clipped-left="clipped"
       fixed
       app
+      elevation="0"
+      :outlined=true
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-btn
