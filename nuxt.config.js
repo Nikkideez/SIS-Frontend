@@ -26,12 +26,7 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/route',
-    // {src: '~/plugins/token.js', ssr: false}
   ],
-
-  router: {
-    middleware: "auth"
-  },
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,
