@@ -34,6 +34,15 @@
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="handleRequestAI"
+          >
+            Request AI
+          </v-btn>
+          <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
               <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
@@ -157,6 +166,15 @@ export default {
     });
   },
   methods: {
+    async handleRequestAI() {
+      const startWeek = this.$moment().startOf('isoWeek').valueOf()
+      const endWeek = this.$moment().endOf('isoWeek').valueOf()
+      const eventsCurrentWeek = this.events.filter(x => x.start > startWeek && x.start < endWeek).map(x => ({start: x.start, end: x.end, label: x.name}))
+      const data = await this.$axios.$post('http://localhost:5000/calendar', {
+        currentWeek: eventsCurrentWeek
+      })
+      console.log(data)
+    },
     viewDay({ date }) {
       // console.log("viewDay");
       this.value = date;
