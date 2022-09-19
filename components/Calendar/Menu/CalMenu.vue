@@ -12,16 +12,14 @@
   >
   <v-card color="grey darken-3" width="500px" flat>
     <v-toolbar :color="selectedEvent.color" dark :height="height">
-      <v-btn icon>
-        <v-icon>mdi-pencil</v-icon>
-      </v-btn>
-      <!-- <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title> -->
       <v-row>
       <v-card-title class="card-title" style="word-break: break-word" ref="title">{{selectedEvent.name}}</v-card-title>
-      
       </v-row><v-spacer></v-spacer>
+      <v-btn icon @click="editDialog = true">
+        <v-icon>mdi-pencil-outline</v-icon>
+      </v-btn>
       <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
+        <v-icon>mdi-delete-outline</v-icon>
       </v-btn>
       <v-btn icon>
         <v-icon>mdi-dots-vertical</v-icon>
@@ -29,24 +27,27 @@
     </v-toolbar>
     <v-card-text>
       <span v-html="selectedEvent.details"></span>
-      <v-container>
-        {{selectedEvent}}
-        {{startFormatted}}
-        {{endFormatted}}
-        {{timePeriod}}
-        <p></p>
+      <v-container v-if="selectedEvent">
+        <p v-if="startFormatted" style="font-size: 20px">{{startFormatted.format("DD/MM/YYYY") == endFormatted.format("DD/MM/YYYY") ?
+          startFormatted.format("dddd, MMMM, YY  ⋅  hh:mm A – ") + endFormatted.format("hh:mm A") : 
+           startFormatted.format("dddd, MMMM, YYYY, hh:mm A  – ") + endFormatted.format("dddd, MMMM, YYYY, hh:mm A") }}</p>
+        <p>{{selectedEvent.category ? 'Category: ' + selectedEvent.category : null}}</p>
+        <p>{{selectedEvent.location ? 'Location: ' + selectedEvent.location : null}}</p>
       </v-container>
     </v-card-text>
     <v-card-actions>
       <v-btn text color="secondary" @click="closeDialogue"> Cancel </v-btn>
     </v-card-actions>
   </v-card>
+  <CalEditEvent v-model="editDialog" :selectedEvent="selectedEvent" @emitEditEvent="emitEditEvent"/>
 </v-menu>
 </template>
 
 <script>
+import CalEditEvent from "./CalEditEvent.vue"
+
 export default {
-  name: "CalDialogue",
+  name: "CalMenu",
   props: ["value", "activator", "selectedEvent", "closeDialogue"],
   data: () => ({
     height: 100,
@@ -54,7 +55,11 @@ export default {
     startFormatted: null,
     endFormatted: null,
     timePeriod: null,
+    editDialog: false
   }),
+  components: {
+    CalEditEvent
+  },
   computed: {
     show: {
       get () {
@@ -65,22 +70,40 @@ export default {
       }
     }
   },
+  mounted() {
+    document.body.addEventListener('keyup', e => {
+      if (e.key === 'Escape') {
+        this.show = false
+      }
+    })
+  },
   watch: {
     show(val) {
       console.log("trigger")
       if (val) {
-        this.startFormatted = new Date(this.selectedEvent.start)
-        this.endFormatted = new Date(this.selectedEvent.end)
-        console.log(this.startFormatted.getDay())
+        this.startFormatted = this.$moment(this.selectedEvent.start)
+        this.endFormatted = this.$moment(this.selectedEvent.end)
         // Handle Height of Toolbar for Multi-line tite
         this.height = this.$refs.title ? this.$refs.title.clientHeight : 64
         // Handle Left and Right Menu to compensate menu overlapping event
         let left = [4, 5, 6]
-        this.right = !left.find(x => x == this.startFormatted.getDay())
+        this.right = !left.find(x => x == this.startFormatted.day())
       }
     }
   },
   methods: {
+    emitEditEvent(event) {
+      this.$emit("emitEditEvent",
+        event.createEvent,
+        event.name,
+        event.start,
+        event.end,
+        event.category,
+        event.location,
+        event.color
+      );
+      this.show = false
+    },
   }
 };
 </script>

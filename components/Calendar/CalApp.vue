@@ -109,6 +109,7 @@
             :selectedEvent="selectedEvent"
             :closeDialogue="closeDialogue"
             :activator="selectedElement"
+            @emitEditEvent="editEvent"
             offset-x
           />
         <!-- </v-menu> -->
@@ -119,16 +120,16 @@
 
 <!-- Heaps of variables and functions ----------------------------------------------->
 <script>
-import CalMenu from "./CalMenu.vue";
+import CalMenu from "./Menu/CalMenu.vue";
 import CalCreateEvent from "./CreateEvent/CalCreateEvent.vue";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc, onSnapshot, collection, where } from "firebase/firestore";
 
 export default {
   name: "CalendarApp",
   components: { CalMenu, CalCreateEvent },
   data: () => ({
     value: "",
-    type: "month",
+    type: "week",
     typeToLabel: {
       month: "Month",
       week: "Week",
@@ -174,6 +175,7 @@ export default {
         currentWeek: eventsCurrentWeek
       })
       console.log(data)
+      // console.log(this.events)
     },
     viewDay({ date }) {
       // console.log("viewDay");
@@ -421,22 +423,27 @@ export default {
       try {
         await setDoc(doc(this.$fire.firestore, "events", "test"), {
           events: this.events,
-        });
+        }, { merge: true }); //Evan: Merge to stop overriding data
       } catch (e) {
         console.log(e);
       }
     },
     // Get user events from database and add them to events array
     async getUserEvents() {
-      const docRef = doc(this.$fire.firestore, "events", "test");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        console.log(docSnap.data().events);
-        this.events.push(...docSnap.data().events);
-        console.log(this.events);
-      } else {
-        console.log("No events bro :-(");
-      }
+      // const docRef = doc(this.$fire.firestore, "events", "test");
+      // const docSnap = await getDoc(docRef);
+      // if (docSnap.exists()) {
+      //   console.log(docSnap.data().events);
+      //   this.events.push(...docSnap.data().events);
+      //   console.log(this.events);
+      // } else {
+      //   console.log("No events bro :-(");
+      // }
+      // const docRef = doc(this.$fire.firestore, "events", "test");
+      // Evan: Change for Realtime Data as getDoc only receives once
+      const unsubEvents = onSnapshot(doc(this.$fire.firestore, "events", "test"), (doc) => {
+        this.events = doc.data().events
+      })
     },
   },
 };

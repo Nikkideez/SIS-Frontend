@@ -1,20 +1,9 @@
 <template>
   <span>
-    <v-dialog v-model="dialog" persistent max-width="600px">
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          outlined
-          class="mr-4"
-          color="grey darken-2"
-          v-bind="attrs"
-          v-on="on"
-        >
-          Create Event
-        </v-btn>
-      </template>
+    <v-dialog v-model="show" max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="text-h5">Create Event</span>
+          <span class="text-h5">Edit Event</span>
         </v-card-title>
         <v-card-text>
           <v-container>
@@ -90,7 +79,7 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="handleClose"> Close </v-btn>
+          <v-btn color="blue darken-1" text @click="show = false"> Close </v-btn>
           <v-btn color="blue darken-1" text @click="handleSave"> Save </v-btn>
         </v-card-actions>
       </v-card>
@@ -99,14 +88,13 @@
 </template>
 
 <script>
-import CalDatePicker from "./CalDatePicker.vue";
-import CalTimePicker from "./CalTimePicker.vue";
+import CalDatePicker from "../CreateEvent/CalDatePicker.vue";
+import CalTimePicker from "../CreateEvent/CalTimePicker.vue";
 export default {
-  name: "CalCreateEvent",
-  props: ["selectedEvent", "closeDialogue", "openCreateEvent"],
+  name: "CalEditEvent",
+  props: ["value", "selectedEvent", "closeDialogue", "openCreateEvent"],
   components: { CalDatePicker, CalTimePicker },
   data: () => ({
-    dialog: false,
     time: null,
     menu2: false,
     modal2: false,
@@ -134,55 +122,53 @@ export default {
     testValue: null,
     createEvent: null,
   }),
-  mounted() {
-    this.$nextTick(function () {
-      const start = new Date(
-        Date.now() - new Date().getTimezoneOffset() * 60000
-      ).toISOString();
-      const end = start;
-      this.setAllDates(start, end);
-    });
+  computed: {
+    show: {
+      get () {
+        return this.value
+      },
+      set (value) {
+        this.$emit('input', value)
+      }
+    }
+  },
+  watch: {
+    show(val) {
+      if (!val) {
+        this.cleanUp()
+      } else {
+        if (this.selectedEvent) {
+          this.createEvent = this.selectedEvent
+          this.startDate = this.$moment(this.selectedEvent.start).format("YYYY-MM-DD")
+          this.endDate = this.$moment(this.selectedEvent.end).format("YYYY-MM-DD")
+          this.startTime = this.$moment(this.selectedEvent.start).format("HH:mm")
+          this.endTime = this.$moment(this.selectedEvent.end).format("HH:mm")
+          this.name = this.selectedEvent.name
+          this.category = this.selectedEvent.category
+          this.location = this.selectedEvent.location
+          this.color = this.selectedEvent.color
+        }
+      }
+    }
   },
   methods: {
-    debug(data) {
-      console.log(data);
-    },
     handleSave() {
-      // const start = new Date(this.startDate + "T" + this.startTime);
-      // const end = new Date(this.endDate + "T" + this.endTime);
       const start = this.$moment(this.startDate + 'T' + this.startTime).valueOf()
       const end = this.$moment(this.endDate + 'T' + this.endTime).valueOf()
-      // const end = new Date(this.endDate + "T" + this.endTime);
-      // console.log(this.startDate)
-      // console.log(this.endDate)
-      // console.log(this.startTime)
-      // console.log(this.endTime)
-      // console.log(start);
-      // console.log(end);
-      // console.log(this.name);
-      if (this.createEvent) {
-        this.$emit(
-          "emitEditEvent",
-          this.createEvent,
-          this.name,
-          start,
-          end,
-          this.category,
-          this.location,
-          this.color
-        );
-      } else {
-        this.$emit(
-          "emitCreateEvent",
-          this.name,
-          start,
-          end,
-          this.category,
-          this.location,
-          this.color
-        );
-      }
-      this.dialog = false;
+      console.log(this.createEvent)
+      this.$emit(
+        "emitEditEvent",
+        {
+          createEvent: this.createEvent,
+          name: this.name,
+          start: start,
+          end: end,
+          category: this.category,
+          location: this.location,
+          color: this.color
+        }
+      );
+      this.show = false;
     },
     setAllDates(start, end) {
       console.log("setAllDates");
@@ -192,12 +178,9 @@ export default {
       this.endTime = end.substring(11, 16);
     },
     setStartDate(date) {
-      // console.log(date)
       this.startDate = date;
-      // console.log(this.startDate)
     },
     setStartTime(time) {
-      // console.log(time)
       this.startTime = time;
     },
     setEndDate(date) {
@@ -205,18 +188,6 @@ export default {
     },
     setEndTime(time) {
       this.endTime = time;
-    },
-    handleOpen() {
-      this.dialog = !this.dialog;
-    },
-    handleClose() {
-      // emitCancelEvent should only be called if createEvent is not null (drag n drop functionality was used to create the event)
-      if (this.createEvent) {
-        console.log("cancelEvent called");
-        this.$emit("emitCancelEvent", this.createEvent);
-      }
-      // this.$refs.datePickerRef.reInitialiseTime();
-      this.dialog = false;
     },
     handleNewEvent(createEvent) {
       console.log("working!!!");
@@ -228,13 +199,16 @@ export default {
         createEvent.end - new Date().getTimezoneOffset() * 60000
       ).toISOString();
       this.setAllDates(start, end);
-      // console.log(this.startDate);
-      // console.log(this.startTime);
-      // // console.log(this.$refs);
-      // // this.$refs.datePickerRef.changeDate(createEvent.start);
-      // // this.startDate = createEvent.start;
-      // // console.log(createEvent.start);
-      // // this.endDate = createEvent.end;
+    },
+    cleanUp() {
+      this.startDate = null
+      this.endDate = null
+      this.startTime = null
+      this.endTime = null
+      this.name = null
+      this.category = null
+      this.location = null
+      this.color = null
     },
   },
 };
