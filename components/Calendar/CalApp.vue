@@ -86,6 +86,7 @@
           @mousedown:time="startTime"
           @mousemove:time="mouseMove"
           @mouseup:time="endDrag"
+          @mouseleave.native="cancelDrag"
         >
           <!-- This part helps add a draggable thing to the bottom of events incase you want to extend them -->
           <template v-slot:event="{ event, timed, eventSummary }">
@@ -110,7 +111,9 @@
             :closeDialogue="closeDialogue"
             :activator="selectedElement"
             @emitEditEvent="editEvent"
+            @emitDeleteEvent="deleteEvent"
             offset-x
+            ref="RefCalMenu"
           />
         <!-- </v-menu> -->
       </v-sheet>
@@ -155,6 +158,8 @@ export default {
     createStart: null,
     extendOriginal: null,
     isMouseDown: false,
+    requestAnimation: null,
+    delay: 0,
   }),
 
   //Call getUserEvents on page load to populate the calendar with events from calendar
@@ -173,6 +178,8 @@ export default {
       const eventsCurrentWeek = this.events.filter(x => x.start > startWeek && x.start < endWeek).map(x => ({start: x.start, end: x.end, label: x.name}))
       const data = await this.$axios.$post('http://localhost:5000/calendar', {
         currentWeek: eventsCurrentWeek
+      }).catch((e) => {
+        console.log(e)
       })
       console.log(data)
       // console.log(this.events)
@@ -204,24 +211,27 @@ export default {
       this.$refs.calendar.next();
     },
     showEvent({ nativeEvent, event }) {
-      // console.log("showevent");
-      const open = () => {
-        this.selectedEvent = event;
-        this.selectedElement = nativeEvent.target;
-        requestAnimationFrame(() =>
-          requestAnimationFrame(() => {
-            this.selectedOpen = true;
-          })
-        );
-      };
-      if (this.selectedOpen) {
-        this.selectedOpen = false;
-        requestAnimationFrame(() => requestAnimationFrame(() => open()));
+      // Evan: Close Menu If Clicked Again
+      if (JSON.stringify(event) == JSON.stringify(this.selectedEvent) && this.selectedOpen) {
+        this.selectedOpen = false
       } else {
-        open();
+        const open = () => {
+          this.selectedEvent = event;
+          this.selectedElement = nativeEvent.target;
+          requestAnimationFrame(() =>
+            this.requestAnimation = requestAnimationFrame(() => {
+              this.selectedOpen = true;
+            })
+          );
+        };
+        if (this.selectedOpen) {
+          this.selectedOpen = false;
+          requestAnimationFrame(() => requestAnimationFrame(() => open()));
+        } else {
+          open();
+        }
+        nativeEvent.stopPropagation();
       }
-      nativeEvent.stopPropagation();
-      console.log(event);
     },
     rnd(a, b) {
       // console.log("rnd");
@@ -238,31 +248,38 @@ export default {
     },
     startTime(tms) {
       this.isMouseDown = true;
-      // console.log("startTime");
-      const mouse = this.toTime(tms);
-      // This if statement activates when you click on an existing event
-      // And want to move it with your mouse
-      if (this.dragEvent && this.dragTime === null) {
-        // console.log("startTime 1");
-        const start = this.dragEvent.start;
-        this.dragTime = mouse - start;
-        // Otherwise this statement activates when you click into the calender
-        // And it creates a new event
-      } else {
-        // console.log("startTime 2");
-        this.createStart = this.roundTime(mouse);
-        // createEvent is the object which holds a single events details.
-        // adding more keys to this object will correlate to the data which an event holds
-        this.createEvent = {
-          name: `Event #${this.events.length}`,
-          color: this.rndElement(this.colors),
-          start: this.createStart,
-          end: this.createStart,
-          timed: true,
-        };
-        this.events.push(this.createEvent);
-        console.log(this.events);
-      }
+      this.delay = this.selectedOpen ? 100 : 0
+      setTimeout(function() {
+        // Evan: Added delay to allow click out of menu on calendar rather than create new event
+        if (this.isMouseDown) {
+          this.selectedOpen = false
+          // console.log("startTime");
+          const mouse = this.toTime(tms);
+          // This if statement activates when you click on an existing event
+          // And want to move it with your mouse
+          if (this.dragEvent && this.dragTime === null) {
+            // console.log("startTime 1");
+            const start = this.dragEvent.start;
+            this.dragTime = mouse - start;
+            // Otherwise this statement activates when you click into the calender
+            // And it creates a new event
+          } else {
+            // console.log("startTime 2");
+            this.createStart = this.roundTime(mouse);
+            // createEvent is the object which holds a single events details.
+            // adding more keys to this object will correlate to the data which an event holds
+            this.createEvent = {
+              name: `Event #${this.events.length}`,
+              color: this.rndElement(this.colors),
+              start: this.createStart,
+              end: this.createStart,
+              timed: true,
+            };
+            this.events.push(this.createEvent);
+          }
+        }
+        this.delay = 0
+      }.bind(this), this.delay);
     },
     extendBottom(event) {
       // console.log("extendBottom");
@@ -280,6 +297,8 @@ export default {
         const mouse = this.toTime(tms);
         // This event activates when you have an existing event and want to extend the time
         if (this.dragEvent && this.dragTime !== null) {
+          // Evan: Close CalMenu on Drag, free up calendar space on drag
+          this.selectedOpen = false
           // console.log('mouseMove1')
           const start = this.dragEvent.start;
           const end = this.dragEvent.end;
@@ -306,7 +325,7 @@ export default {
       // console.log("endDrag");
       console.log(this.createEvent);
       // console.log(this.$refs)
-      if (this.createEvent && !this.extendOriginal) {
+      if (this.createEvent && !this.extendOriginal && this.isMouseDown) {
         this.$refs.createEventRef.handleNewEvent(this.createEvent);
         this.$refs.createEventRef.handleOpen();
       }
@@ -321,29 +340,30 @@ export default {
     // This event cancels the last event that was created
     // The initial functionality was to cancel everytime your mouse leaves
     // I removed the event listener on calendar because its really annoying and it kept deleting events
-    // cancelDrag(createEvent) {
-    //   // console.log("cancelDrag")
-    //   // console.log(this.createEvent)
-    //   if (this.createEvent) {
-    //     console.log("cancelDrag 1");
-    //     if (this.extendOriginal) {
-    //       console.log("cancelDrag 2");
-    //       this.createEvent.end = this.extendOriginal;
-    //     } else {
-    //       console.log("cancelDrag 3");
-    //       const i = this.events.indexOf(this.createEvent);
-    //       if (i !== -1) {
-    //         console.log("cancelDrag 4");
-    //         this.events.splice(i, 1);
-    //       }
-    //     }
-    //   }
-    //   // console.log(this.events);
-    //   this.createEvent = null;
-    //   this.createStart = null;
-    //   this.dragTime = null;
-    //   this.dragEvent = null;
-    // },
+    // Evan: Adding Back as it seems to work again
+    cancelDrag() {
+      // console.log("cancelDrag")
+      // console.log(this.createEvent)
+      if (this.createEvent) {
+        console.log("cancelDrag 1");
+        if (this.extendOriginal) {
+          console.log("cancelDrag 2");
+          this.createEvent.end = this.extendOriginal;
+        } else {
+          console.log("cancelDrag 3");
+          const i = this.events.indexOf(this.createEvent);
+          if (i !== -1) {
+            console.log("cancelDrag 4");
+            this.events.splice(i, 1);
+          }
+        }
+      }
+      // console.log(this.events);
+      this.createEvent = null;
+      this.createStart = null;
+      this.dragTime = null;
+      this.dragEvent = null;
+    },
     // Removes an event from the events array
     removeEvent(createEvent) {
       const i = this.events.indexOf(createEvent);
@@ -427,6 +447,10 @@ export default {
       } catch (e) {
         console.log(e);
       }
+    },
+    deleteEvent(createEvent) {
+      const i = this.events.indexOf(createEvent);
+      this.events.splice(i, 1)
     },
     // Get user events from database and add them to events array
     async getUserEvents() {

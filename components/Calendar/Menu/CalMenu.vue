@@ -10,41 +10,43 @@
     style
     :content-class="right ? 'menu-right' : 'menu-left'"
   >
-  <v-card color="grey darken-3" width="500px" flat>
-    <v-toolbar :color="selectedEvent.color" dark :height="height">
-      <v-row>
-      <v-card-title class="card-title" style="word-break: break-word" ref="title">{{selectedEvent.name}}</v-card-title>
-      </v-row><v-spacer></v-spacer>
-      <v-btn icon @click="editDialog = true">
-        <v-icon>mdi-pencil-outline</v-icon>
-      </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-delete-outline</v-icon>
-      </v-btn>
-      <v-btn icon>
-        <v-icon>mdi-dots-vertical</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <v-card-text>
-      <span v-html="selectedEvent.details"></span>
-      <v-container v-if="selectedEvent">
-        <p v-if="startFormatted" style="font-size: 20px">{{startFormatted.format("DD/MM/YYYY") == endFormatted.format("DD/MM/YYYY") ?
-          startFormatted.format("dddd, MMMM, YY  ⋅  hh:mm A – ") + endFormatted.format("hh:mm A") : 
-           startFormatted.format("dddd, MMMM, YYYY, hh:mm A  – ") + endFormatted.format("dddd, MMMM, YYYY, hh:mm A") }}</p>
-        <p>{{selectedEvent.category ? 'Category: ' + selectedEvent.category : null}}</p>
-        <p>{{selectedEvent.location ? 'Location: ' + selectedEvent.location : null}}</p>
-      </v-container>
-    </v-card-text>
-    <v-card-actions>
-      <v-btn text color="secondary" @click="closeDialogue"> Cancel </v-btn>
-    </v-card-actions>
-  </v-card>
-  <CalEditEvent v-model="editDialog" :selectedEvent="selectedEvent" @emitEditEvent="emitEditEvent"/>
-</v-menu>
+    <v-card color="grey darken-3" width="500px" flat>
+      <v-toolbar :color="selectedEvent.color" dark :height="height">
+        <v-row>
+        <v-card-title class="card-title" style="word-break: break-word" ref="title">{{selectedEvent.name}}</v-card-title>
+        </v-row><v-spacer></v-spacer>
+        <v-btn icon @click="editDialog = true">
+          <v-icon>mdi-pencil-outline</v-icon>
+        </v-btn>
+        <v-btn icon @click="deleteDialog = true">
+          <v-icon>mdi-delete-outline</v-icon>
+        </v-btn>
+        <v-btn icon>
+          <v-icon>mdi-dots-vertical</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-card-text>
+        <span v-html="selectedEvent.details"></span>
+        <v-container v-if="selectedEvent">
+          <p v-if="startFormatted" style="font-size: 20px">{{startFormatted.format("DD/MM/YYYY") == endFormatted.format("DD/MM/YYYY") ?
+            startFormatted.format("dddd, MMMM, YY  ⋅  hh:mm A – ") + endFormatted.format("hh:mm A") : 
+            startFormatted.format("dddd, MMMM, YYYY, hh:mm A  – ") + endFormatted.format("dddd, MMMM, YYYY, hh:mm A") }}</p>
+          <p>{{selectedEvent.category ? 'Category: ' + selectedEvent.category : null}}</p>
+          <p>{{selectedEvent.location ? 'Location: ' + selectedEvent.location : null}}</p>
+        </v-container>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn text color="secondary" @click="closeDialogue"> Cancel </v-btn>
+      </v-card-actions>
+    </v-card>
+    <CalEditEvent v-model="editDialog" :selectedEvent="selectedEvent" @emitEditEvent="emitEditEvent"/>
+    <CalDeleteEvent v-model="deleteDialog" @emitDeleteEvent="emitDeleteEvent"/>
+  </v-menu>
 </template>
 
 <script>
 import CalEditEvent from "./CalEditEvent.vue"
+import CalDeleteEvent from "./CalDeleteEvent.vue"
 
 export default {
   name: "CalMenu",
@@ -55,10 +57,12 @@ export default {
     startFormatted: null,
     endFormatted: null,
     timePeriod: null,
-    editDialog: false
+    editDialog: false,
+    deleteDialog: false
   }),
   components: {
-    CalEditEvent
+    CalEditEvent,
+    CalDeleteEvent
   },
   computed: {
     show: {
@@ -92,15 +96,21 @@ export default {
     }
   },
   methods: {
-    emitEditEvent(event) {
+    emitEditEvent(createEvent, name, start, end, category, location, color) {
       this.$emit("emitEditEvent",
-        event.createEvent,
-        event.name,
-        event.start,
-        event.end,
-        event.category,
-        event.location,
-        event.color
+        createEvent,
+        name,
+        start,
+        end,
+        category,
+        location,
+        color
+      );
+      this.show = false
+    },
+    emitDeleteEvent() {
+      this.$emit("emitDeleteEvent",
+        this.selectedEvent,
       );
       this.show = false
     },
