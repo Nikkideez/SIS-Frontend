@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container>
     <!-- <v-col> md="x" must total to 12 in example below 7+5=12 -->
     <v-row no-gutters>
       <v-col cols="12" sm="6" md="7">
@@ -31,6 +31,7 @@
 
 <script>
 export default {
-  name: 'SettingsPage'
+  name: 'SettingsPage',
+
 }
 </script>

@@ -1,44 +1,51 @@
 
 <template>
-
-      <v-container>
-        <v-main>
-          <navigation :color="color"  />
-          <home />
-          <about />
-          <download />
-          <pricing />
-          <contact />
-        </v-main>
-        <v-scale-transition>
-          <v-btn
-            fab
-            v-show="fab"
-            v-scroll="onScroll"
-            dark
-            fixed
-            bottom
-            right
-            color="#29be83"
-            @click="toTop"
-          >
-            <v-icon>mdi-arrow-up</v-icon>
-          </v-btn>
-        </v-scale-transition>
-        <foote />
-      </v-container>
-
+  <v-container fluid>
+    <navigation :color="color"  />
+    <v-main>
+      <home />
+      <about />
+      <download />
+      <pricing />
+      <contact />
+    </v-main>
+    <v-scale-transition>
+      <v-btn
+        fab
+        v-show="fab"
+        v-scroll="onScroll"
+        dark
+        fixed
+        bottom
+        right
+        color="#29be83"
+        @click="toTop"
+      >
+        <v-icon>mdi-arrow-up</v-icon>
+      </v-btn>
+    </v-scale-transition>
+    <foote />
+  </v-container>
 </template>
 
 
-<style scoped>
+<style >
+  .container {
+    margin-bottom: 0;
+    padding: 0;
+    max-width: 100%;
+    height: 100%;
+  }
+
   .v-main {
     background-image: url("/img/bgMain.png");
     background-attachment: fixed;
     background-position: center;
     background-size: cover;
   }
-  </style>
+
+</style>
+
 <script>
 
 import navigation from "@/components/Welcome/Navigation.vue";

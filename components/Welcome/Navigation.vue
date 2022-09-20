@@ -1,51 +1,11 @@
 <template>
-  <div>
-    <v-navigation-drawer
-      v-model="drawer"
-      app
-      temporary
-      dark
-      src="@/assets/img/bgDrawer.jpg"
-    >
-      <v-list>
-        <v-list-item>
-          <v-list-item-avatar>
-
-          </v-list-item-avatar>
-          <v-list-item-content>
-
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-
-      <v-divider />
-
-      <v-list dense>
-        <v-list-item
-          v-for="([icon, text, link], i) in items"
-          :key="i"
-          link
-          @click="$vuetify.goTo(link)"
-        >
-          <v-list-item-icon class="justify-center">
-            <v-icon>{{ icon }}</v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title class="subtitile-1">{{
-              text
-            }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-
+  <div style="position: sticky;">
     <v-app-bar
       app
       :color="color"
       :flat="flat"
       dark
       class="px-15"
-      :class="{ expand: flat }"
     >
       <v-toolbar-title>
         <v-img src="@/static/img/logo.png" max-width="50px" />

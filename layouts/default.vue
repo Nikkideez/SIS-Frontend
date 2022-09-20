@@ -1,10 +1,12 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer :mini-variant="miniVariant" :clipped="clipped" fixed app>
+    <v-navigation-drawer :mini-variant="miniVariant" :clipped="clipped" fixed app >
       <v-list>
         <v-img v-show="!miniVariant" src="\img\autocalLogoTitle.png"></v-img>
         <v-img v-show="miniVariant" src="\autocal_logo.png"></v-img>
-        <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
+
+        <!-- If users are logged in -->
+        <v-list-item v-if="user" v-for="(item, i) in items" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -12,9 +14,27 @@
             <v-list-item-title v-text="item.title" />
           </v-list-item-content>
         </v-list-item>
+
+        <!-- If Users are not Logged in  -->
+        <v-list-item v-if="!user" to="/" router exact>
+          <v-list-item-action>
+            <v-icon>mdi-home-circle</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title >Welcome</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item v-if="!user" to="/auth" router exact>
+          <v-list-item-action>
+            <v-icon>mdi-login</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title >Login and Registration</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app elevation="0" :outlined=true>
+    <v-app-bar :clipped-left="clipped" fixed app elevation="0" >
 
       <v-btn icon @click.stop="miniVariant = !miniVariant">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
@@ -24,11 +44,14 @@
       <v-toolbar-title v-text="title" />
       <v-spacer />
 
-      <v-btn icon to="/profile">
+      <!-- If users are logged in -->
+      <v-toolbar-title>{{user ? ` ${user.email}` : ''}}</v-toolbar-title>
+      <v-btn icon to="/profile" v-if="user">
         <v-icon>mdi-account-circle</v-icon>
       </v-btn>
 
-      <v-btn icon to="/auth">
+      <!-- If Users are not Logged in  -->
+      <v-btn icon to="/auth" v-if="!user">
         <v-icon>mdi-login-variant</v-icon>
       </v-btn>
     </v-app-bar>
@@ -85,7 +108,33 @@ export default {
       miniVariant: true,
       right: true,
       rightDrawer: false,
-      title: 'AutoCal'
+      title: 'AutoCal',
+      users: null
+    }
+  },
+
+  computed: {
+    user: {
+      get() {
+
+        console.log("HELLO WORLD AERHGAERH:" + JSON.stringify(this.$store.state.user))
+        return this.$store.state.user
+      }
+    },
+  },
+  methods: {
+
+    async getUser(uid) {
+      try {
+        this.$fire.firestore.collection('users').where('uid', '==', uid).get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.users = doc.data()
+          })
+        })
+      } catch (e) {
+        console.log(e)
+      }
+
     }
   }
 }

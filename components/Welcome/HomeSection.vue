@@ -5,20 +5,13 @@
         <v-col cols="10">
           <v-row align="center" justify="center">
             <v-col cols="12" md="6" xl="8">
-              <h1 class="display-2 font-weight-bold mb-4">AutoCal</h1>
+              <v-img max-width="30%" src="\img\autocalLogoTitle.png"></v-img>
               <h1 class="font-weight-light">
                 Stop wasting time organising your week <br />
                 Our Automated Calendar uses bleeding edge <u><b>AI</b></u> and <u><b>Machine Learning</b></u> <br />
                 to make sure that you get the most of your day!
               </h1>
-              <v-btn
-                rounded
-                outlined
-                large
-                dark
-                @click="$vuetify.goTo('#features')"
-                class="mt-5"
-              >
+              <v-btn rounded outlined large dark @click="$vuetify.goTo('#features')" class="mt-5">
                 What makes us different?
                 <v-icon class="ml-2">mdi-arrow-down</v-icon>
               </v-btn>

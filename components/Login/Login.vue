@@ -15,7 +15,7 @@
                 label="Email"
                 outlined
                 dense
-                color="blue"
+                color="#29be83"
                 autocomplete="username"
                 class="mt-16"
                 v-on:keyup.enter="loginUser"
@@ -25,7 +25,7 @@
                 label="Password"
                 outlined
                 dense
-                color="blue"
+                color="#29be83"
                 autocomplete="new-password"
                 type="password"
                 v-on:keyup.enter="loginUser"
@@ -39,7 +39,7 @@
                   <span class="caption blue--text">Forgot password</span>
                 </v-col>
               </v-row>
-              <v-btn color="blue" dark block tile @click="loginUser">Log in</v-btn>
+              <v-btn color="#29be83" dark block tile @click="loginUser">Log in</v-btn>
 
               <h5 class="text-center grey--text mt-4 mb-3">Or Log in using</h5>
               <div class="signup-buttons">
@@ -83,7 +83,7 @@
         </v-row>
       </v-card-text>
     </v-col>
-    <v-col cols="12" md="6" class="blue rounded-bl-xl">
+    <v-col cols="12" md="6" style="background-color: #29be83;" class="rounded-bl-xl">
       <div style="text-align: center; padding: 180px 0">
         <v-card-text class="white--text">
           <h3 class="text-center">Don't Have an Account Yet?</h3>
@@ -117,7 +117,7 @@ name: "Login",
           this.password
         ).then(() => {
           console.log("Success Login")
-          this.$router.push({ name: 'dashboard' })
+          this.$router.push({ name: 'calendar' })
         })
       } catch (e) {
         console.log(e)
