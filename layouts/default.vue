@@ -31,32 +31,31 @@
       elevation="0"
       :outlined=true
     >
-      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      
       <v-btn
         icon
         @click.stop="miniVariant = !miniVariant"
       >
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
-      <v-btn
-        icon
-        @click.stop="clipped = !clipped"
-      >
-        <v-icon>mdi-application</v-icon>
-      </v-btn>
-      <v-btn
-        icon
-        @click.stop="fixed = !fixed"
-      >
-        <v-icon>mdi-minus</v-icon>
-      </v-btn>
+      
+      
       <v-toolbar-title v-text="title" />
       <v-spacer />
+      
+      
       <v-btn
         icon
-        @click.stop="rightDrawer = !rightDrawer"
+        to="/profile"
       >
-        <v-icon>mdi-menu</v-icon>
+        <v-icon>mdi-account-circle</v-icon>    
+      </v-btn>
+
+      <v-btn
+        icon
+        to="/auth"
+      >
+        <v-icon>mdi-login-variant</v-icon>
       </v-btn>
     </v-app-bar>
     <v-main>
@@ -100,25 +99,16 @@ export default {
       fixed: false,
       items: [
         {
-          icon: 'mdi-apps',
+          icon: 'mdi-home-circle',
           title: 'Welcome',
           to: '/'
         },
         {
-          icon: 'mdi-home-circle',
-          title: 'Splash',
-          to: '/welcome'
-        },
-        {
           icon: 'mdi-calendar',
-          title: 'calendar',
+          title: 'Calendar',
           to: '/calendar',
         },
-        {
-          icon: 'mdi-account-circle',
-          title: 'Profile',
-          to: '/profile'
-        },
+        
         {
           icon: 'mdi-chart-bubble',
           title: 'Inspire',
