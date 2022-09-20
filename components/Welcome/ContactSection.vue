@@ -40,7 +40,7 @@
                 <v-textarea
                     v-model="textArea"
                     :rules="textAreaRules"
-                    label="Mensage"
+                    label="Message"
                     required
                 />
 
@@ -111,18 +111,18 @@ export default {
     valid: true,
     name: "",
     nameRules: [
-      (v) => !!v || "O campo nome é obrigatório",
-      (v) => (v && v.length >= 6) || "O nome precisa ter mais de 6 caracteres",
+      (v) => !!v || "Invalid Name",
+      (v) => (v && v.length >= 6) || "Your name must be more than 6 characters",
     ],
     email: "",
     emailRules: [
-      (v) => !!v || "O campo email é obrigatório",
-      (v) => /.+@.+\..+/.test(v) || "O E-mail precisa ser válido",
+      (v) => !!v || "Invalid Email",
+      (v) => /.+@.+\..+/.test(v) || "Email could not be verified",
     ],
     textArea: "",
     textAreaRules: [
-      (v) => !!v || "O campo de texto é obrigatório",
-      (v) => (v && v.length >= 10) || "Mínimo de 10 caracteres",
+      (v) => !!v || "Invalid Message",
+      (v) => (v && v.length >= 10) || "Message must be more than 10 characters",
     ],
     lazy: false,
     snackbar: {

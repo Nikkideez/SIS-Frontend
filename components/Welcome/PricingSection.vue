@@ -13,24 +13,24 @@
                     <div class="flex-center">
                       <div class="circle1">
                         <div class="circle2">
-                          <v-img src="require('~@/assets/img/paperplane.svg')" ></v-img>
+                          <v-img src="/img/paperplane.svg" ></v-img>
                         </div>
                       </div>
                     </div>
                     <div class="text--disabled text-uppercase text-h5 my-2">AutoCal Basic</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase blue--text">3 AI Generations per week</div>
+                    <div class="text-uppercase text-colour">3 AI Generations per week</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase blue--text">Automated Weekly Suggestions</div>
+                    <div class="text-uppercase text-colour">Automated Weekly Suggestions</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase blue--text">Basic Friends Integration</div>
+                    <div class="text-uppercase text-colour">Basic Friends Integration</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase text-h4 mt-6 blue--text">Free</div><p class="blue--text">for 2 years</p>
+                    <div class="text-uppercase text-h4 mt-6 text-colour">Free</div><p class="text-colour">for 2 years</p>
                     <v-btn
                         v-bind="size"
                         rounded
                         outlined
-                        color="blue"
+                        color="#29be83"
                         class="mt-6"
                     >
                       Try it out!
@@ -46,24 +46,24 @@
                     <div class="flex-center">
                       <div class="circle1">
                         <div class="circle2">
-                          <v-img src="~@/assets/img/airplane.svg"/>
+                          <v-img src="img/airplane.svg"/>
                         </div>
                       </div>
                     </div>
                     <div class="text--disabled text-uppercase text-h5 my-2">AutoCal Pro</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase blue--text">Unlimited AI Generations</div>
+                    <div class="text-uppercase text-colour">Unlimited AI Generations</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase blue--text">Automated Daily Suggestions</div>
+                    <div class="text-uppercase text-colour">Automated Daily Suggestions</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase blue--text">Pro Friends Integration</div>
+                    <div class="text-uppercase text-colour">Pro Friends Integration</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase text-h4 mt-6 blue--text">$3.00 </div><p class="blue--text">monthly</p>
+                    <div class="text-uppercase text-h4 mt-6 text-colour">$3.00 </div><p class="text-colour">monthly</p>
                     <v-btn
                         v-bind="size"
                         rounded
                         outlined
-                        color="blue"
+                        color="#29be83"
                         class="mt-6"
                     >
                       Purchase
@@ -81,24 +81,24 @@
                     <div class="flex-center">
                       <div class="circle1">
                         <div class="circle2">
-                          <v-img src="~@/assets/img/aeroplane.svg"/>
+                          <v-img src="img/aeroplane.svg"/>
                         </div>
                       </div>
                     </div>
                     <div class="text--disabled text-uppercase text-h5 my-2">AutoCal Enterprise</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase blue--text">Unlimited AI Generations</div>
+                    <div class="text-uppercase text-colour">Unlimited AI Generations</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase blue--text">Automated Daily Suggestions</div>
+                    <div class="text-uppercase text-colour">Automated Daily Suggestions</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase blue--text">Enterprise Integration</div>
+                    <div class="text-uppercase text-colour">Enterprise Integration</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase text-h4 mt-6 blue--text">$6.00</div><p class="blue--text">monthly</p>
+                    <div class="text-uppercase text-h4 mt-6 text-colour">$6.00</div><p class="text-colour">monthly</p>
                     <v-btn
                         v-bind="size"
                         rounded
                         outlined
-                        color="blue"
+                        color="#29be83"
                         class="mt-6"
                     >
                       Purchase
@@ -138,6 +138,12 @@
 
 <style lang="scss">
 $main_color: #283e79;
+
+.text-colour {
+  color: #35f1a7;
+}
+
+
 
 ul {
   font-size: 13px;

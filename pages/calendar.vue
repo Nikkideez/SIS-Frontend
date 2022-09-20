@@ -1,26 +1,40 @@
-<template>
+<!-- <template>
   <div class="cal-container">
     <div>
-      <CalList />
+
     </div>
     <div class="schedule-container">
-      <CalApp/>
+
     </div>
   </div>
+</template> -->
+
+<template>
+  <v-container>
+    <v-row no-gutters>
+
+      <v-col cols="12" md="10">
+        <CalApp />
+      </v-col>
+
+      <v-col cols="6" md="2">
+        <CalList />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
-  
+
 <script>
-import CalList from '~/components/Calendar/CalList.vue';
-import CalApp from '~/components/Calendar/CalApp.vue';
+import CalList from "~/components/Calendar/CalList.vue";
+import CalApp from "~/components/Calendar/CalApp.vue";
 export default {
-  name: 'TestPage',
+  name: "TestPage",
   components: { CalList, CalApp },
-}
+};
 </script>
-  
+
 <style>
 html {
-  overflow: hidden !important;
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
@@ -73,8 +87,4 @@ html::-webkit-scrollbar {
   margin-bottom: 24px;
   padding-bottom: 40px;
 }
-
 </style>
-  
-  
-  

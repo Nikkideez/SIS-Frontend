@@ -58,7 +58,7 @@
 
 <style scoped>
 #download {
-  background-image: url("assets\img\landing_page_background.jpg");
+  background-image: url("static\img\landing_page_background.jpg");
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;

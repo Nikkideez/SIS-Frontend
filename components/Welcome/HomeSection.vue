@@ -1,6 +1,6 @@
 <template>
   <section id="hero">
-    <v-parallax dark src="@/assets/img/bgHero.jpg" height="750">
+    <v-parallax dark src="@/assets/img/bgHero.jpg">
       <v-row align="center" justify="center">
         <v-col cols="10">
           <v-row align="center" justify="center">
@@ -130,7 +130,7 @@
       <div class="svg-border-waves text-white">
         <v-img src="https://landingpagecalangoweb.web.app/img/borderWaves.b5381f92.svg" />
       </div>
-      <img src="~@/assets/img/wave2.svg" />
+      <img src="~@/static/img/wave2.svg" />
     </div>
   </section>
 </template>
@@ -143,17 +143,17 @@ export default {
       videoId: "i8IvvHJssWE",
       features: [
         {
-          img: require("@/assets/img/icon2.png"),
+          img: require("@/static/img/icon2.png"),
           title: "AI Predictions",
           text: "Using artificial intelligence, the calendar will be able to fill in your activities and schedule your day with a press of a button",
         },
         {
-          img: require("@/assets/img/icon3.png"),
+          img: require("@/static/img/icon3.png"),
           title: "Changes for you",
           text: "The Calendar will learn what you like and dont like. Scheduling your day will get easier and easier the more you use the app",
         },
         {
-          img: require("@/assets/img/icon1.png"),
+          img: require("@/static/img/icon1.png"),
           title: "Privacy in Mind",
           text: "While the AutoCal will know your schedule, no one else will! Your schedule is your data and we wont steal it like Facebook or Meta",
         },

@@ -12,7 +12,7 @@
               <v-row>
                 <v-col cols="12" class="d-flex align-center">
                   <v-img
-                    src="@/assets/img/icon1.svg"
+                    src="../static/img/icon1.svg"
                     max-width="60px"
                     class="mr-4"
                   />
@@ -23,7 +23,7 @@
 
                 <v-col cols="12" class="d-flex align-center">
                   <v-img
-                    src="@/assets/img/icon3.svg"
+                    src="/img/icon3.svg"
                     max-width="60px"
                     class="mr-4"
                   />

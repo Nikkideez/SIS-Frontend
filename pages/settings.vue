@@ -17,7 +17,7 @@
     <v-row>
       <v-col class="text-center">
         <blockquote class="blockquote">
-          This section is for Manav
+          This section is for Darshan
           <footer>
             <small>
               <em>&mdash;Jason</em>
@@ -29,9 +29,8 @@
   </v-container>
 </template>
 
-
 <script>
 export default {
-  name: 'Profile Page'
+  name: 'SettingsPage'
 }
 </script>

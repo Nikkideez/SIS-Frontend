@@ -1,35 +1,39 @@
+
 <template>
-  <v-app>
-    <navigation :color="color" :flat="flat" />
-    <v-main class="pt-0">
-      <home />
-      <about />
-      <download />
-      <pricing />
-      <contact />
-    </v-main>
-    <v-scale-transition>
-      <v-btn
-        fab
-        v-show="fab"
-        v-scroll="onScroll"
-        dark
-        fixed
-        bottom
-        right
-        color="secondary"
-        @click="toTop"
-      >
-        <v-icon>mdi-arrow-up</v-icon>
-      </v-btn>
-    </v-scale-transition>
-    <foote />
-  </v-app>
+
+      <v-container>
+        <v-main>
+          <navigation :color="color"  />
+          <home />
+          <about />
+          <download />
+          <pricing />
+          <contact />
+        </v-main>
+        <v-scale-transition>
+          <v-btn
+            fab
+            v-show="fab"
+            v-scroll="onScroll"
+            dark
+            fixed
+            bottom
+            right
+            color="#29be83"
+            @click="toTop"
+          >
+            <v-icon>mdi-arrow-up</v-icon>
+          </v-btn>
+        </v-scale-transition>
+        <foote />
+      </v-container>
+
 </template>
+
 
 <style scoped>
   .v-main {
-    background-image: url("~@/assets/img/bgMain.png");
+    background-image: url("/img/bgMain.png");
     background-attachment: fixed;
     background-position: center;
     background-size: cover;
@@ -59,14 +63,14 @@ export default {
   },
   data: () => ({
     fab: null,
-    color: "",
+    color: "#29be83",
     flat: null,
   }),
 
   watch: {
     fab(value) {
       if (value) {
-        this.color = "secondary";
+        this.color = "#29be83";
         this.flat = false;
       } else {
         this.color = "transparent";
