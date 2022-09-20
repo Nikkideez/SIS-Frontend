@@ -7,73 +7,77 @@
         </v-card-title>
         <v-card-text>
           <v-container>
-            <v-row>
-              <!-- Picking the Start Date ---------------------->
-              <v-col cols="12" sm="6" md="6">
-                <CalDatePicker
-                  menu-label="Start Date"
-                  :initial-date="startDate"
-                  @passDate="setStartDate"
-                />
-              </v-col>
-              <!-- Picking the Start Time (This can be improved I know)-->
-              <v-col cols="12" sm="6" md="6">
-                <CalTimePicker
-                  menu-label="Start Time"
-                  :initial-time="startTime"
-                  @passTime="setStartTime"
-                />
-              </v-col>
-              <!-- Picking the End Date ----------------------->
-              <v-col cols="12" sm="6" md="6">
-                <CalDatePicker
-                  menu-label="End Date"
-                  @passDate="setEndDate"
-                  :initial-date="endDate"
-                />
-              </v-col>
-              <!-- Picking the End Time (This can be improved I know)-->
-              <v-col cols="12" sm="6" md="6">
-                <CalTimePicker
-                  menu-label="End Time"
-                  @passTime="setEndTime"
-                  :initial-time="endTime"
-                />
-              </v-col>
-              <!-- Name --------------------------------------->
-              <v-col cols="12">
-                <v-text-field
-                  label="Name*"
-                  required
-                  v-model="name"
-                ></v-text-field>
-              </v-col>
-              <!-- Category ----------------------------------->
-              <v-col cols="12">
-                <v-select
-                  :items="categories"
-                  v-model="category"
-                  label="Category*"
-                  required
-                ></v-select>
-              </v-col>
-              <!-- Location ----------------------------------->
-              <v-col cols="12">
-                <v-text-field
-                  label="Location"
-                  required
-                  v-model="location"
-                ></v-text-field>
-              </v-col>
-              <!-- Color ----------------------------------->
-              <v-col cols="12">
-                <v-select
-                  :items="colors"
-                  v-model="color"
-                  label="Color"
-                ></v-select>
-              </v-col>
-            </v-row>
+            <v-form ref="form" v-model="valid">
+              <v-row>
+                <!-- Picking the Start Date ---------------------->
+                <v-col cols="12" sm="6" md="6">
+                  <CalDatePicker
+                    menu-label="Start Date"
+                    :initial-date="startDate"
+                    @passDate="setStartDate"
+                  />
+                </v-col>
+                <!-- Picking the Start Time (This can be improved I know)-->
+                <v-col cols="12" sm="6" md="6">
+                  <CalTimePicker
+                    menu-label="Start Time"
+                    :initial-time="startTime"
+                    @passTime="setStartTime"
+                  />
+                </v-col>
+                <!-- Picking the End Date ----------------------->
+                <v-col cols="12" sm="6" md="6">
+                  <CalDatePicker
+                    menu-label="End Date"
+                    @passDate="setEndDate"
+                    :initial-date="endDate"
+                  />
+                </v-col>
+                <!-- Picking the End Time (This can be improved I know)-->
+                <v-col cols="12" sm="6" md="6">
+                  <CalTimePicker
+                    menu-label="End Time"
+                    @passTime="setEndTime"
+                    :initial-time="endTime"
+                  />
+                </v-col>
+                <!-- Name --------------------------------------->
+                <v-col cols="12">
+                  <v-text-field
+                    label="Name*"
+                    required
+                    v-model="name"
+                    :rules="[v => !!v || 'Event name is required']"
+                  ></v-text-field>
+                </v-col>
+                <!-- Category ----------------------------------->
+                <v-col cols="12">
+                  <v-select
+                    :items="categories"
+                    v-model="category"
+                    label="Category*"
+                    required
+                    :rules="[v => !!v || 'Category is required']"
+                  ></v-select>
+                </v-col>
+                <!-- Location ----------------------------------->
+                <v-col cols="12">
+                  <v-text-field
+                    label="Location"
+                    required
+                    v-model="location"
+                  ></v-text-field>
+                </v-col>
+                <!-- Color ----------------------------------->
+                <v-col cols="12">
+                  <v-select
+                    :items="colors"
+                    v-model="color"
+                    label="Color"
+                  ></v-select>
+                </v-col>
+              </v-row>
+            </v-form>
           </v-container>
           <small>*indicates required field</small>
         </v-card-text>
@@ -95,6 +99,7 @@ export default {
   props: ["value", "selectedEvent", "closeDialogue", "openCreateEvent"],
   components: { CalDatePicker, CalTimePicker },
   data: () => ({
+    valid: false,
     time: null,
     menu2: false,
     modal2: false,
@@ -155,20 +160,20 @@ export default {
     handleSave() {
       const start = this.$moment(this.startDate + 'T' + this.startTime).valueOf()
       const end = this.$moment(this.endDate + 'T' + this.endTime).valueOf()
-      console.log(this.createEvent)
-      this.$emit(
-        "emitEditEvent",
-        {
-          createEvent: this.createEvent,
-          name: this.name,
-          start: start,
-          end: end,
-          category: this.category,
-          location: this.location,
-          color: this.color
-        }
-      );
-      this.show = false;
+      this.$refs.form.validate();
+      if (this.valid) {
+        this.$emit(
+          "emitEditEvent",
+          this.createEvent,
+          this.name,
+          start,
+          end,
+          this.category,
+          this.location,
+          this.color
+        );
+        this.show = false;
+      }
     },
     setAllDates(start, end) {
       console.log("setAllDates");
@@ -209,6 +214,7 @@ export default {
       this.category = null
       this.location = null
       this.color = null
+      this.$refs.form.resetValidation()
     },
   },
 };
