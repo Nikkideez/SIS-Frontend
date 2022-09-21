@@ -2,7 +2,7 @@
 <template>
   <v-container fluid>
     <navigation :color="color"  />
-    <v-main>
+    <v-main style="padding: 66px 0px 0px 0px; ">
       <home />
       <about />
       <download />

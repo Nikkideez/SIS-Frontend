@@ -1,6 +1,6 @@
 <template>
   <section id="hero">
-    <v-parallax dark src="@/assets/img/bgHero.jpg">
+    <v-parallax dark src="">
       <v-row align="center" justify="center">
         <v-col cols="10">
           <v-row align="center" justify="center">
@@ -11,15 +11,14 @@
                 Our Automated Calendar uses bleeding edge <u><b>AI</b></u> and <u><b>Machine Learning</b></u> <br />
                 to make sure that you get the most of your day!
               </h1>
-              <v-btn rounded outlined large dark @click="$vuetify.goTo('#features')" class="mt-5">
-                What makes us different?
-                <v-icon class="ml-2">mdi-arrow-down</v-icon>
-              </v-btn>
 
+
+              <v-spacer></v-spacer>
               <!-- TODO: Figure out how tf to change this button to redirect to login page -->
               <!-- TODO 2: Change the navigation colour from orange to the AutoCal colours -->
               <div class="video d-flex align-center py-4">
-                <a @click.stop="dialog = true"  class="playBut">
+                <v-btn to="/auth">
+                  <a @click="$vuetify.go('/auth')"  class="playBut">
                   <svg
                     version="1.1"
                     xmlns="http://www.w3.org/2000/svg"
@@ -58,9 +57,8 @@
                     />
                   </svg>
                 </a>
-
-
-                <p class="subheading ml-2 mb-0">Watch the AI in action!</p>
+                </v-btn>
+                <p class="subheading ml-2 mb-0">Try out the calendar!</p>
               </div>
             </v-col>
             <v-col cols="12" md="6" xl="4" class="hidden-sm-and-down"> </v-col>
@@ -112,11 +110,7 @@
     </v-container>
     <v-dialog v-model="dialog" max-width="640px">
       <v-card>
-        <youtube
-          :video-id="videoId"
-          @ready="ready"
-          @playing="playing"
-        ></youtube>
+
       </v-card>
     </v-dialog>
     <div class="svg-border-waves">
@@ -154,32 +148,15 @@ export default {
     };
   },
   watch: {
-    dialog(value) {
-      if (!value) {
-        this.pause();
-      }
-    },
+
   },
   methods: {
-    ready(event) {
-      this.player = event.target;
+
+    login(event){
+      this.$router.push({ name: 'calendar' })
     },
-    playing(event) {
-      // The player is playing a video.
-    },
-    change() {
-      // when you change the value, the player will also change.
-      // If you would like to change `playerVars`, please change it before you change `videoId`.
-      // If `playerVars.autoplay` is 1, `loadVideoById` will be called.
-      // If `playerVars.autoplay` is 0, `cueVideoById` will be called.
-      this.videoId = "another video id";
-    },
-    stop() {
-      this.player.stopVideo();
-    },
-    pause() {
-      this.player.pauseVideo();
-    },
+
+
   },
 };
 </script>

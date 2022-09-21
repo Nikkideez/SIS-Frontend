@@ -28,7 +28,7 @@
     </v-row>
 
 
-    <p v-if="users">{{users}}</p>
+    <p v-if="users">{{users}} // {{users.firstName}} {{users.lastName}}</p>
     <v-btn @click="logoutUser">Logout</v-btn>
     <v-btn @click="getUser(user.uid)">Get User Data</v-btn>
   </v-container>

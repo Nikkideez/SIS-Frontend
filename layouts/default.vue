@@ -11,7 +11,7 @@
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
           <v-list-item-content>
-            <v-list-item-title v-text="item.title" />
+            <v-list-item-title v-text="item.title" class="font-weight-light" />
           </v-list-item-content>
         </v-list-item>
 
@@ -36,7 +36,7 @@
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app elevation="0" >
 
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
+      <v-btn icon @click.stop="miniVariant = !miniVariant" v-if="user">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
 
@@ -51,9 +51,9 @@
       </v-btn>
 
       <!-- If Users are not Logged in  -->
-      <v-btn icon to="/auth" v-if="!user">
+      <!-- <v-btn icon to="/auth" v-if="!user">
         <v-icon>mdi-login-variant</v-icon>
-      </v-btn>
+      </v-btn> -->
     </v-app-bar>
     <v-main>
       <v-container>
@@ -85,11 +85,6 @@ export default {
       fixed: false,
       items: [
         {
-          icon: 'mdi-home-circle',
-          title: 'Welcome',
-          to: '/'
-        },
-        {
           icon: 'mdi-calendar',
           title: 'Calendar',
           to: '/calendar',
@@ -116,13 +111,14 @@ export default {
   computed: {
     user: {
       get() {
-
-        console.log("HELLO WORLD AERHGAERH:" + JSON.stringify(this.$store.state.user))
         return this.$store.state.user
       }
     },
   },
   methods: {
+    // getUnits: function() {
+    //   console.log("Running on initialise");
+    // },
 
     async getUser(uid) {
       try {
@@ -134,8 +130,10 @@ export default {
       } catch (e) {
         console.log(e)
       }
-
     }
-  }
+  },
+  // beforeMount(){
+  //   this.getUnits()
+  // },
 }
 </script>
