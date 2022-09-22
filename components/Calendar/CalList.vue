@@ -1,7 +1,7 @@
 <template>
   <!-- <v-navigation-drawer permanent style="width: 270px; height: 100%" right> -->
     <v-container>
-      <v-date-picker class="my-datepicker" calendar-class="my-datepicker_calendar" v-model="picker" no-title></v-date-picker>
+      <v-date-picker v-model="calendar" no-title></v-date-picker>
       <v-divider></v-divider>
       <v-list>
         <v-row>
@@ -27,7 +27,6 @@ export default {
   name: "CalList",
   data: () => ({
     selectedItem: 0,
-    picker: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     items: [
       { text: "Health", icon: "mdi-folder" },
       { text: "Sleep", icon: "mdi-account-multiple" },
@@ -36,9 +35,14 @@ export default {
       { text: "Education", icon: "mdi-check-circle" },
     ],
   }),
-  watch: {
-    picker(val) {
-      console.log(val)
+  computed: {
+    calendar: {
+      get() {
+        return this.$store.state.calendar;
+      },
+      set(val) {
+        this.$store.commit("SET_CALENDAR", val);
+      },
     }
   },
 };

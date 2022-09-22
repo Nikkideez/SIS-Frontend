@@ -6,14 +6,18 @@
         <v-img v-show="miniVariant" src="\autocal_logo.png"></v-img>
 
         <!-- If users are logged in -->
-        <v-list-item v-if="users" v-for="(item, i) in items" :key="i" :to="item.to" router exact>
-          <v-list-item-action>
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.title" class="font-weight-light" />
-          </v-list-item-content>
-        </v-list-item>
+        <div v-if="users">
+          <div v-if="user">
+            <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
+              <v-list-item-action>
+                <v-icon>{{ item.icon }}</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title v-text="item.title" class="font-weight-light" />
+              </v-list-item-content>
+            </v-list-item>
+          </div>
+        </div>
 
         <!-- If Users are not Logged in  -->
         <v-list-item v-if="!users" to="/" router exact>
