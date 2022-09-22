@@ -34,7 +34,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app elevation="0" >
+    <v-app-bar :clipped-left="clipped" fixed app elevation="0" clipped-right>
 
       <v-btn icon @click.stop="miniVariant = !miniVariant" v-if="users">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
@@ -56,10 +56,13 @@
       </v-btn> -->
     </v-app-bar>
     <v-main>
-      <v-container>
+      <!-- <v-container> -->
         <Nuxt />
-      </v-container>
+      <!-- </v-container> -->
     </v-main>
+    <v-navigation-drawer app right clipped v-if="$route.name == 'calendar'" :width="290">
+      <CalList />
+    </v-navigation-drawer>
     <!-- <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
       <v-list>
         <v-list-item @click.native="right = !right">
@@ -76,6 +79,8 @@
 </template>
 
 <script>
+import CalList from "~/components/Calendar/CalList.vue";
+
 export default {
   name: 'DefaultLayout',
   data() {
@@ -106,6 +111,10 @@ export default {
       title: 'AutoCal',
       users: null
     }
+  },
+
+  components: {
+    CalList
   },
 
   computed: {
@@ -142,3 +151,25 @@ export default {
   // },
 }
 </script>
+
+<style>
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: #e6e6e6;
+  border-left: 1px solid #dadada;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d3d3d3;
+  border: solid 3px #e6e6e6;
+  border-radius: 7px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(168, 168, 168);
+}
+html { overflow-y: auto }
+</style>
