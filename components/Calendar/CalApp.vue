@@ -1,8 +1,8 @@
 <template>
   <!-- The toolbar for the calendar -->
-  <v-row class="fill-height">
+  <v-row>
     <v-col>
-      <v-sheet height="64">
+      <!-- <v-sheet height="64"> -->
         <v-toolbar flat>
           <!-- <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Create Event
@@ -66,11 +66,12 @@
             </v-list>
           </v-menu>
         </v-toolbar>
-      </v-sheet>
+      <!-- </v-sheet> -->
       <!-- I was a bit lazy with max height and hard coded 88vh, but a better way could definitely be implemented
             to make sure the calendar component takes up the rest of the page
           -->
-      <v-sheet height="100%" max-height="88vh">
+      <!-- <v-sheet height="100%" max-height="88vh"> -->
+      <v-sheet height="100%" max-height="85vh">
         <v-calendar
           ref="calendar"
           v-model="value"

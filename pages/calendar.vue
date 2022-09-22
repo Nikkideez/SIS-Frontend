@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <v-row no-gutters>
+  <!-- <v-container> -->
+    <!-- <v-row no-gutters>
 
       <v-col cols="12" md="10">
         <CalApp />
@@ -9,16 +9,17 @@
       <v-col cols="6" md="2">
         <CalList />
       </v-col>
-    </v-row>
-  </v-container>
+    </v-row> -->
+    <CalApp />
+  <!-- </v-container> -->
 </template>
 
 <script>
-import CalList from "~/components/Calendar/CalList.vue";
+// import CalList from "~/components/Calendar/CalList.vue";
 import CalApp from "~/components/Calendar/CalApp.vue";
 export default {
   name: "TestPage",
-  components: { CalList, CalApp },
+  components: { CalApp },
 };
 </script>
 
