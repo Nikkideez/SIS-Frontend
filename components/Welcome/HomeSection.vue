@@ -17,8 +17,9 @@
               <!-- TODO: Figure out how tf to change this button to redirect to login page -->
               <!-- TODO 2: Change the navigation colour from orange to the AutoCal colours -->
               <div class="video d-flex align-center py-4">
-                <v-btn to="/auth">
-                  <a @click="$vuetify.go('/auth')"  class="playBut">
+                <v-btn to="/auth" class="playBut">
+                  <!-- EVAN: Commented Out due to errors moved to v-btn -->
+                  <!-- <a @click="$vuetify.go('/auth')"  class="playBut"> -->
                   <svg
                     version="1.1"
                     xmlns="http://www.w3.org/2000/svg"
@@ -56,7 +57,7 @@
                       r="103.3"
                     />
                   </svg>
-                </a>
+                <!-- </a> -->
                 </v-btn>
                 <p class="subheading ml-2 mb-0">Try out the calendar!</p>
               </div>
@@ -172,7 +173,7 @@ export default {
 
 .playBut {
   /*  border: 1px solid red;*/
-  display: inline-block;
+  // display: inline-block;
   -webkit-transition: all 0.5s ease;
 
   .triangle {
