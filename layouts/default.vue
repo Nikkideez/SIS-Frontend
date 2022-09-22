@@ -6,7 +6,7 @@
         <v-img v-show="miniVariant" src="\autocal_logo.png"></v-img>
 
         <!-- If users are logged in -->
-        <v-list-item v-if="user" v-for="(item, i) in items" :key="i" :to="item.to" router exact>
+        <v-list-item v-if="users" v-for="(item, i) in items" :key="i" :to="item.to" router exact>
           <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-item-action>
@@ -16,7 +16,7 @@
         </v-list-item>
 
         <!-- If Users are not Logged in  -->
-        <v-list-item v-if="!user" to="/" router exact>
+        <v-list-item v-if="!users" to="/" router exact>
           <v-list-item-action>
             <v-icon>mdi-home-circle</v-icon>
           </v-list-item-action>
@@ -24,7 +24,7 @@
             <v-list-item-title >Welcome</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if="!user" to="/auth" router exact>
+        <v-list-item v-if="!users" to="/auth" router exact>
           <v-list-item-action>
             <v-icon>mdi-login</v-icon>
           </v-list-item-action>
@@ -36,7 +36,7 @@
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app elevation="0" >
 
-      <v-btn icon @click.stop="miniVariant = !miniVariant" v-if="user">
+      <v-btn icon @click.stop="miniVariant = !miniVariant" v-if="users">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
 
@@ -45,8 +45,8 @@
       <v-spacer />
 
       <!-- If users are logged in -->
-      <v-toolbar-title>{{user ? ` ${user.email}` : ''}}</v-toolbar-title>
-      <v-btn icon to="/profile" v-if="user">
+      <v-toolbar-title>{{users ? ` ${user.email}` : ''}}</v-toolbar-title>
+      <v-btn icon to="/profile" v-if="users">
         <v-icon>mdi-account-circle</v-icon>
       </v-btn>
 
@@ -114,6 +114,11 @@ export default {
         return this.$store.state.user
       }
     },
+  },
+  created() {
+    if (this.user) {
+      this.getUser(this.user.uid)
+    }
   },
   methods: {
     // getUnits: function() {
