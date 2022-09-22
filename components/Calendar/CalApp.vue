@@ -74,7 +74,7 @@
       <v-sheet height="100%" max-height="85vh">
         <v-calendar
           ref="calendar"
-          v-model="value"
+          v-model="calendar"
           color="primary"
           :events="events"
           :event-ripple="false"
@@ -132,7 +132,7 @@ export default {
   name: "CalendarApp",
   components: { CalMenu, CalCreateEvent },
   data: () => ({
-    value: "",
+    // value: "",
     type: "week",
     typeToLabel: {
       month: "Month",
@@ -163,6 +163,17 @@ export default {
     delay: 0,
   }),
 
+  computed: {
+    calendar: {
+      get() {
+        return this.$store.state.calendar;
+      },
+      set(val) {
+        this.$store.commit("SET_CALENDAR", val);
+      },
+    }
+  },
+
   //Call getUserEvents on page load to populate the calendar with events from calendar
   mounted() {
     console.log("mounted");
@@ -189,7 +200,7 @@ export default {
     },
     viewDay({ date }) {
       // console.log("viewDay");
-      this.value = date;
+      this.calendar = date;
       this.type = "day";
     },
     // Also have no idea what purpose getEventColor serves
@@ -201,7 +212,7 @@ export default {
     // Today btn
     setToday() {
       // console.log("setToday");
-      this.value = "";
+      this.calendar = "";
     },
     // Prev btn
     prev() {
