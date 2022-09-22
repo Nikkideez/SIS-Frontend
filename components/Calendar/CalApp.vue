@@ -181,8 +181,10 @@ export default {
       }).catch((e) => {
         console.log(e)
       })
-      console.log(data)
-      // console.log(this.events)
+      console.log(JSON.parse(data))
+      this.events.push(...JSON.parse(data))
+      // console.log(events)
+      console.log(this.events)
     },
     viewDay({ date }) {
       // console.log("viewDay");
