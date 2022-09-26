@@ -50,7 +50,7 @@ import CalDeleteEvent from "./CalDeleteEvent.vue"
 
 export default {
   name: "CalMenu",
-  props: ["value", "activator", "selectedEvent", "closeDialogue"],
+  props: ["value", "activator", "selectedEvent", "closeDialogue", "weekdays"],
   data: () => ({
     height: 100,
     right: true,
@@ -90,8 +90,9 @@ export default {
         // Handle Height of Toolbar for Multi-line tite
         this.height = this.$refs.title ? this.$refs.title.clientHeight : 64
         // Handle Left and Right Menu to compensate menu overlapping event
-        let left = [4, 5, 6]
-        this.right = !left.find(x => x == this.startFormatted.day())
+        // let left = [4, 5, 6]
+        let left = this.weekdays.slice(4)
+        this.right = !left.some(x => x == this.startFormatted.day())
       }
     }
   },
