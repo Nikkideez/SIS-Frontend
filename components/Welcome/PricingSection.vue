@@ -190,15 +190,7 @@ ul {
   justify-content: center;
 }
 
-.circle2 {
-  border-radius: 50%;
-  width: 100px;
-  height: 100px;
-  background-color: #e0effc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 
 .flex-center {
   display: flex;

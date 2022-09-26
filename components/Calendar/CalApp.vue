@@ -194,9 +194,13 @@ export default {
         console.log(e)
       })
       console.log(JSON.parse(data))
-      this.events.push(...JSON.parse(data))
+      this.getTopPerDay(JSON.parse(data))
+      // this.events.push(...JSON.parse(data))
       // console.log(events)
       console.log(this.events)
+    },
+    getTopPerDay(data) {
+      data.forEach(week => this.events.push(week[week.length-1]))
     },
     viewDay({ date }) {
       // console.log("viewDay");
