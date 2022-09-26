@@ -79,6 +79,7 @@
           :events="events"
           :event-ripple="false"
           :type="type"
+          :weekdays="weekdays"
           class="noselect"
           @click:event="showEvent"
           @click:more="viewDay"
@@ -111,6 +112,7 @@
             :selectedEvent="selectedEvent"
             :closeDialogue="closeDialogue"
             :activator="selectedElement"
+            :weekdays="weekdays"
             @emitEditEvent="editEvent"
             @emitDeleteEvent="deleteEvent"
             offset-x
@@ -140,6 +142,7 @@ export default {
       day: "Day",
       "4day": "4 Days",
     },
+    weekdays: [1, 2, 3, 4, 5, 6, 0],
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false, //Decides whether the dialogue should be open or not
@@ -187,7 +190,7 @@ export default {
     async handleRequestAI() {
       const startWeek = this.$moment().startOf('isoWeek').valueOf()
       const endWeek = this.$moment().endOf('isoWeek').valueOf()
-      const eventsCurrentWeek = this.events.filter(x => x.start > startWeek && x.start < endWeek).map(x => ({start: x.start, end: x.end, label: x.name}))
+      const eventsCurrentWeek = this.events.filter(x => x.start > startWeek && x.start < endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
       const data = await this.$axios.$post('http://localhost:5000/calendar', {
         currentWeek: eventsCurrentWeek
       }).catch((e) => {
