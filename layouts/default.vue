@@ -6,7 +6,7 @@
         <v-img v-show="miniVariant" src="\autocal_logo.png"></v-img>
 
         <!-- If users are logged in -->
-        <div v-if="users">
+        <div v-if="activeUser">
           <div v-if="user">
             <v-list-item v-for="(item, i) in items" :key="i" :to="item.to" router exact>
               <v-list-item-action>
@@ -20,7 +20,7 @@
         </div>
 
         <!-- If Users are not Logged in  -->
-        <v-list-item v-if="!users" to="/" router exact>
+        <v-list-item v-if="!activeUser" to="/" router exact>
           <v-list-item-action>
             <v-icon>mdi-home-circle</v-icon>
           </v-list-item-action>
@@ -28,7 +28,7 @@
             <v-list-item-title >Welcome</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if="!users" to="/auth" router exact>
+        <v-list-item v-if="!activeUser" to="/auth" router exact>
           <v-list-item-action>
             <v-icon>mdi-login</v-icon>
           </v-list-item-action>
@@ -40,7 +40,7 @@
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app elevation="0" clipped-right outlined>
 
-      <v-btn icon @click.stop="miniVariant = !miniVariant" v-if="users">
+      <v-btn icon @click.stop="miniVariant = !miniVariant" v-if="activeUser">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
       </v-btn>
 
@@ -49,8 +49,8 @@
       <v-spacer />
 
       <!-- If users are logged in -->
-      <v-toolbar-title>{{users ? ` ${user.email}` : ''}}</v-toolbar-title>
-      <v-btn icon to="/profile" v-if="users">
+      <v-toolbar-title>{{activeUser ? ` ${user.email}` : ''}}</v-toolbar-title>
+      <v-btn icon to="/profile" v-if="activeUser">
         <v-icon>mdi-account-circle</v-icon>
       </v-btn>
 
@@ -113,7 +113,8 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'AutoCal',
-      users: null
+      users: null,
+      activeUser: null,
     }
   },
 
@@ -128,9 +129,20 @@ export default {
       }
     },
   },
-  created() {
+  watch: {
+    user(val) {
+      console.log(this.user)
+      if (!val) {
+        this.activeUser = null
+      } else {
+        this.activeUser = this.user
+      }
+    }
+  },
+  mounted() {
     if (this.user) {
-      this.getUser(this.user.uid)
+      // this.getUser(this.user.uid)  //Evan: Mounted can be used, REMINDER: Cleanup Code
+      this.activeUser = this.user
     }
   },
   methods: {
