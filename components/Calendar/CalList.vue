@@ -47,3 +47,9 @@ export default {
   },
 };
 </script>
+
+<style>
+  .theme--dark.v-picker__body {
+    background: transparent
+  }
+</style>
