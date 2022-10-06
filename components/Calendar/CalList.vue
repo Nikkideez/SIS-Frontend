@@ -1,40 +1,120 @@
 <template>
   <!-- <v-navigation-drawer permanent style="width: 270px; height: 100%" right> -->
-    <v-container>
+    <v-container class="container">
       <v-date-picker v-model="calendar" no-title></v-date-picker>
-      <v-divider></v-divider>
       <v-list>
-        <v-row>
-          <p style="padding-top: 10px; padding-left: 20px">Categories</p>
-        </v-row>
-        <v-list-item-group v-model="selectedItem" color="primary">
-          <v-list-item v-for="(item, i) in items" :key="i">
-            <v-list-item-icon>
-              <v-icon v-text="item.icon"></v-icon>
-            </v-list-item-icon>
+        <v-list-group v-for="(list, i) in lists" :key="i" v-model="list.active">
+          <template v-slot:activator>
             <v-list-item-content>
-              <v-list-item-title v-text="item.text"></v-list-item-title>
+              <v-layout>
+              <v-list-item-title v-text="list.title"></v-list-item-title>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      text
+                      small
+                      v-bind="attrs"
+                      v-on="on"
+                      @click.stop=""
+                    >
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Add Category</span>
+                </v-tooltip>
+              </v-layout>
+            </v-list-item-content>
+          </template>
+          <!-- test
+          {{selectedItem}} -->
+          <v-list-item
+            v-model="selectedItem"
+            v-for="item in list.items"
+            :key="item.title"
+            link
+            @click="handleCategoryClick(item)"
+            dense
+          >
+            <!-- <v-list-item-icon>
+              <v-icon v-text="item.icon"></v-icon>
+            </v-list-item-icon> -->
+            <v-list-item-content>
+              <!-- <v-list-item-title
+              v-text="item.text"
+              ></v-list-item-title> -->
+              <v-row align="center">
+                <v-col md="2">
+                  <v-checkbox
+                    v-model="item.active"
+                    :color="item.color"
+                    @click.stop=""
+                    hide-details
+                    class="ml-2 mb-2"
+                    dense
+                  >
+                  </v-checkbox>
+                </v-col>
+                <v-col>
+                  {{item.text}}
+                </v-col>
+                <v-col align="right">
+                  <v-btn icon @click.stop="">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
             </v-list-item-content>
           </v-list-item>
-        </v-list-item-group>
+        </v-list-group>
       </v-list>
+      <RequestCategoryDialog
+        v-model="requestDialog"
+        :selectedCategory="selectedCategory"
+        @request="requestEvents"
+      />
     </v-container>
   <!-- </v-navigation-drawer> -->
 </template>
 
 <script>
+import RequestCategoryDialog from "./Category/RequestCategoryDialog.vue"
+
 export default {
   name: "CalList",
   data: () => ({
-    selectedItem: 0,
-    items: [
-      { text: "Health", icon: "mdi-folder" },
-      { text: "Sleep", icon: "mdi-account-multiple" },
-      { text: "Work", icon: "mdi-star" },
-      { text: "Relax", icon: "mdi-history" },
-      { text: "Education", icon: "mdi-check-circle" },
+    selectedItem: null,
+    lists: [
+      {
+        active: true,
+        items: [
+          { text: "Sleep", color: "rgb(33, 150, 245)", active: true },
+          { text: "Fitness", color: "rgb(103, 58, 183)", active: true },
+          { text: "Work", color: "rgb(0, 188, 212)", active: true },
+          { text: "Leisure", color: "rgb(255, 152, 0)", active: true },
+          { text: "Education", color: "rgb(76, 175, 80)", active: true },
+        ],
+        title: 'Categories',
+      },
     ],
+    selectedCategory: null,
+    requestDialog: false,
   }),
+
+  components: {
+    RequestCategoryDialog
+  },
+  // Evan: Placeholder, remove once get user details is done
+  // created() {
+  //   try {
+  //     this.$fire.firestore.collection('users').where('uid', '==', uid).get().then((querySnapshot) => {
+  //       querySnapshot.forEach((doc) => {
+  //         this.users = doc.data()
+  //       })
+  //     })
+  //   } catch (e) {
+  //     console.log(e)
+  //   }
+  // },
   computed: {
     calendar: {
       get() {
@@ -45,11 +125,31 @@ export default {
       },
     }
   },
+  methods: {
+    handleCategoryClick(category) {
+      this.selectedCategory = category
+      this.requestDialog = true
+    },
+    requestEvents(options) {
+      this.$emit("requestEvents", options)
+    },
+  },
 };
 </script>
 
 <style>
-  .theme--dark.v-picker__body {
+  /* NO SCOPE: Transparent Calendar Background */
+  .theme--dark .v-picker__body {
     background: transparent
+  }
+</style>
+<style scoped>
+  /* SCOPED: White List Highlight and Text */
+  .theme--dark.v-application .primary--text {
+    color: white !important;
+  }
+  /* Transaparent container */
+  .container {
+    background: transparent !important;
   }
 </style>

@@ -64,9 +64,9 @@
         <Nuxt />
       <!-- </v-container> -->
     </v-main>
-    <v-navigation-drawer app right clipped v-if="$route.name == 'calendar'" :width="290">
+    <!-- <v-navigation-drawer app right clipped v-if="$route.name == 'calendar'" :width="290">
       <CalList />
-    </v-navigation-drawer>
+    </v-navigation-drawer> -->
     <!-- <v-navigation-drawer v-model="rightDrawer" :right="right" temporary fixed>
       <v-list>
         <v-list-item @click.native="right = !right">
@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import CalList from "~/components/Calendar/CalList.vue";
+// import CalList from "~/components/Calendar/CalList.vue";
 
 export default {
   name: 'DefaultLayout',
@@ -118,9 +118,9 @@ export default {
     }
   },
 
-  components: {
-    CalList
-  },
+  // components: {
+  //   CalList
+  // },
 
   computed: {
     user: {

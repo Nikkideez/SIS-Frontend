@@ -123,7 +123,7 @@ export default {
     startTime: null,
     endTime: null,
     name: "",
-    categories: ["Health", "Sleep", "Work", "Relax", "Education"],
+    categories: ["Fitness", "Sleep", "Work", "Leisure", "Education"],
     category: "",
     location: "",
     colors: [

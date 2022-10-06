@@ -34,14 +34,15 @@
             {{ $refs.calendar.title }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn
+          <!-- EVAN: Remove, Use Sidebar -->
+          <!-- <v-btn
             outlined
             class="mr-4"
             color="grey darken-2"
             @click="handleRequestAI"
           >
             Request AI
-          </v-btn>
+          </v-btn> -->
           <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
@@ -91,7 +92,7 @@
           @mouseleave.native="cancelDrag"
         >
           <!-- This part helps add a draggable thing to the bottom of events incase you want to extend them -->
-          <template v-slot:event="{ event, timed, eventSummary }">
+          <template v-slot:event="{ event, timed, eventSummary }" style="background-color: green">
             <div class="v-event-draggable" v-html="eventSummary()"></div>
             <div
               v-if="timed"
@@ -107,7 +108,8 @@
           :activator="selectedElement"
           offset-x
         > -->
-          <CalMenu
+        <!-- <div v-if="selectedEvent"> -->
+          <CalMenu v-if="!selectedEvent.recommend"
             v-model="selectedOpen"
             :selectedEvent="selectedEvent"
             :closeDialogue="closeDialogue"
@@ -118,6 +120,15 @@
             offset-x
             ref="RefCalMenu"
           />
+          <CalAIMenu v-else
+            v-model="selectedOpen"
+            :selectedEvent="selectedEvent"
+            :activator="selectedElement"
+            @accept="acceptRecommendation"
+            offset-x
+            ref="RefCalAIMenu"
+          />
+        <!-- </div> -->
         <!-- </v-menu> -->
       </v-sheet>
     </v-col>
@@ -127,12 +138,13 @@
 <!-- Heaps of variables and functions ----------------------------------------------->
 <script>
 import CalMenu from "./Menu/CalMenu.vue";
+import CalAIMenu from "./Menu/CalAIMenu.vue"
 import CalCreateEvent from "./CreateEvent/CalCreateEvent.vue";
 import { doc, setDoc, getDoc, onSnapshot, collection, where } from "firebase/firestore";
 
 export default {
   name: "CalendarApp",
-  components: { CalMenu, CalCreateEvent },
+  components: { CalMenu, CalCreateEvent, CalAIMenu },
   data: () => ({
     // value: "",
     type: "week",
@@ -187,12 +199,15 @@ export default {
     });
   },
   methods: {
-    async handleRequestAI() {
+    async handleRequestAI(options) {
+      console.log(options)
+      this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
       const startWeek = this.$moment().startOf('isoWeek').valueOf()
       const endWeek = this.$moment().endOf('isoWeek').valueOf()
-      const eventsCurrentWeek = this.events.filter(x => x.start > startWeek && x.start < endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
+      const eventsCurrentWeek = this.events.filter(x => x.start >= startWeek && x.start <= endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
       const data = await this.$axios.$post('http://localhost:5000/calendar', {
-        currentWeek: eventsCurrentWeek
+        currentWeek: eventsCurrentWeek,
+        options: options
       }).catch((e) => {
         console.log(e)
       })
@@ -202,8 +217,20 @@ export default {
       // console.log(events)
       console.log(this.events)
     },
+    acceptRecommendation(event) {
+      const i = this.events.indexOf(event);
+      console.log(i)
+      const formatColor = this.events[i].color.slice(0, this.events[i].color.lastIndexOf(', ')) + ')'
+      this.events[i].color = formatColor
+      this.events[i].recommend = false
+    },
     getTopPerDay(data) {
-      data.forEach(week => this.events.push(week[week.length-1]))
+      data.forEach(week => {
+        if (week.length == 0)
+          return
+        else
+          this.events.push(week[week.length-1])
+      })
     },
     viewDay({ date }) {
       // console.log("viewDay");
@@ -463,7 +490,7 @@ export default {
       console.log(this.events);
       try {
         await setDoc(doc(this.$fire.firestore, "events", "test"), {
-          events: this.events,
+          events: this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true), //Save Only Confirmed Events
         }, { merge: true }); //Evan: Merge to stop overriding data
       } catch (e) {
         console.log(e);
