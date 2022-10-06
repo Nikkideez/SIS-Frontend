@@ -262,7 +262,7 @@ export default {
       // console.log("startDrag");
       if (event && timed) {
         this.dragEvent = event;
-        // console.log(event);
+        console.log(event);
         this.dragTime = null;
         this.extendOriginal = null;
       }

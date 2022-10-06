@@ -69,8 +69,11 @@
         <v-btn text @click="$vuetify.goTo('#pricing')">
           <span class="mr-2">Pricing</span>
         </v-btn>
-        <v-btn rounded outlined text @click="$vuetify.goTo('#contact')">
+        <v-btn text @click="$vuetify.goTo('#contact')">
           <span class="mr-2">Contact Us</span>
+        </v-btn>
+        <v-btn rounded outlined text to="/auth">
+          <span class="mr-2">Log in/Sign up</span>
         </v-btn>
       </div>
     </v-app-bar>

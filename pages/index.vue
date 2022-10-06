@@ -29,7 +29,7 @@
 </template>
 
 
-<style >
+<style scoped>
   .container {
     margin-bottom: 0;
     padding: 0;

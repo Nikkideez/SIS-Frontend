@@ -38,7 +38,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app elevation="0" clipped-right>
+    <v-app-bar :clipped-left="clipped" fixed app elevation="0" clipped-right outlined>
 
       <v-btn icon @click.stop="miniVariant = !miniVariant" v-if="activeUser">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
