@@ -14,7 +14,7 @@
           <v-btn @click="accept">
             <v-icon>mdi-check</v-icon>
           </v-btn>
-          <v-btn>
+          <v-btn @click="reject">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         <!-- </v-container> -->
@@ -66,6 +66,10 @@ export default {
   methods: {
     accept() {
       this.$emit("accept", this.selectedEvent);
+      this.show = false;
+    },
+    reject() {
+      this.$emit("reject", this.selectedEvent);
       this.show = false;
     }
   }
