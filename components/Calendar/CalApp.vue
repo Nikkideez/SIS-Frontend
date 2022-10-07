@@ -125,6 +125,7 @@
             :selectedEvent="selectedEvent"
             :activator="selectedElement"
             @accept="acceptRecommendation"
+            @reject="rejectRecommendation"
             offset-x
             ref="RefCalAIMenu"
           />
@@ -176,6 +177,7 @@ export default {
     isMouseDown: false,
     requestAnimation: null,
     delay: 0,
+    data: null,
   }),
 
   computed: {
@@ -213,6 +215,7 @@ export default {
       })
       console.log(JSON.parse(data))
       this.getTopPerDay(JSON.parse(data))
+      this.data = JSON.parse(data)
       // this.events.push(...JSON.parse(data))
       // console.log(events)
       console.log(this.events)
@@ -223,6 +226,16 @@ export default {
       const formatColor = this.events[i].color.slice(0, this.events[i].color.lastIndexOf(', ')) + ')'
       this.events[i].color = formatColor
       this.events[i].recommend = false
+    },
+    rejectRecommendation(event) {
+      const i = this.events.indexOf(event);
+      console.log(this.data)
+      console.log(this.data[event.start_day])
+      this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
+      this.data[event.start_day].pop()
+      this.getTopPerDay(this.data)
+      console.log(event)
+
     },
     getTopPerDay(data) {
       data.forEach(week => {
