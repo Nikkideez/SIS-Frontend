@@ -1,7 +1,7 @@
 <template>
   <v-app dark>
-    <v-navigation-drawer :mini-variant="miniVariant" :clipped="clipped" fixed app >
-      <v-list>
+    <v-navigation-drawer :mini-variant="miniVariant" :clipped="clipped" fixed app v-if="activeUser && !['', 'auth'].includes($route.name)">
+      <v-list >
         <v-img v-show="!miniVariant" src="\img\autocalLogoTitle.png"></v-img>
         <v-img v-show="miniVariant" src="\autocal_logo.png"></v-img>
 
