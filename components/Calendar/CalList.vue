@@ -158,17 +158,18 @@ export default {
     RequestCategoryDialog
   },
   // Evan: Placeholder, remove once get user details is done
-  // created() {
-  //   try {
-  //     this.$fire.firestore.collection('users').where('uid', '==', uid).get().then((querySnapshot) => {
-  //       querySnapshot.forEach((doc) => {
-  //         this.users = doc.data()
-  //       })
-  //     })
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // },
+  created() {
+    this.calendar = this.$moment().format("YYYY-MM-DD")
+    // try {
+    //   this.$fire.firestore.collection('users').where('uid', '==', uid).get().then((querySnapshot) => {
+    //     querySnapshot.forEach((doc) => {
+    //       this.users = doc.data()
+    //     })
+    //   })
+    // } catch (e) {
+    //   console.log(e)
+    // }
+  },
   computed: {
     calendar: {
       get() {
