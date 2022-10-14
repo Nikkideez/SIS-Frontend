@@ -35,14 +35,14 @@
           </v-toolbar-title>
           <v-spacer></v-spacer>
           <!-- EVAN: Remove, Use Sidebar -->
-          <!-- <v-btn
+          <v-btn
             outlined
             class="mr-4"
             color="grey darken-2"
-            @click="handleRequestAI"
+            @click="handleRequestAll"
           >
-            Request AI
-          </v-btn> -->
+            Request All Categories
+          </v-btn>
           <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
@@ -218,6 +218,18 @@ export default {
       this.data = JSON.parse(data)
       // this.events.push(...JSON.parse(data))
       // console.log(events)
+      console.log(this.events)
+    },
+    async handleRequestAll() {
+      const data = await this.$axios.$post('http://localhost:5000/calendar/all', {
+        // selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").format("DD.MM.YYYY")
+        selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY")
+      }).catch((e) => {
+        console.log(e)
+      })
+      console.log(data)
+      // console.log(JSON.parse(data))
+      this.events.push(...data)
       console.log(this.events)
     },
     acceptRecommendation(event) {
