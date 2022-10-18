@@ -20,7 +20,7 @@
       <v-window-item
         :value="2"
       >
-        <AIEventsDotChart :events="events" />
+        <AIEventsDotChart :recommendedEvents="recommendedEvents" />
       </v-window-item>
     </v-window>
 
@@ -71,7 +71,8 @@
     }),
 
     props: {
-      events: Array
+      events: Array,
+      recommendedEvents: Array
     },
 
     components: {
