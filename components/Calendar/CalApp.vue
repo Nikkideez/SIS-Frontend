@@ -204,8 +204,8 @@ export default {
     async handleRequestAI(options) {
       console.log(options)
       this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
-      const startWeek = this.$moment().startOf('isoWeek').valueOf()
-      const endWeek = this.$moment().endOf('isoWeek').valueOf()
+      const startWeek = this.$moment(this.calendar, "YYYY-MM-DD").startOf('isoWeek').valueOf()
+      const endWeek = this.$moment(this.calendar, "YYYY-MM-DD").endOf('isoWeek').valueOf()
       const eventsCurrentWeek = this.events.filter(x => x.start >= startWeek && x.start <= endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
       const data = await this.$axios.$post('http://localhost:5000/calendar', {
         currentWeek: eventsCurrentWeek,
