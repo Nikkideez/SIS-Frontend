@@ -8,8 +8,9 @@
 
       <!-- <v-col cols="6" md="2"> -->
         <v-navigation-drawer app right clipped :width="290">
-          <CalList @requestEvents="requestEvents"/>
+          <CalList @requestEvents="requestEvents" :events="calendarEvents" />
         </v-navigation-drawer>
+
       <!-- </v-col> -->
     <!-- </v-row> -->
     <!-- <CalApp /> -->
@@ -22,9 +23,21 @@ import CalApp from "~/components/Calendar/CalApp.vue";
 export default {
   name: "TestPage",
   components: { CalApp, CalList },
+  data: () => ({
+    calendarEvents: null
+  }),
+  mounted() {
+    this.$watch(
+      () => {
+        return this.$refs.refCalApp.events;
+      },
+      (val) => {
+        this.calendarEvents = val
+      }
+    );
+  },
   methods: {
     requestEvents(options) {
-      console.log(options)
       this.$refs.refCalApp.handleRequestAI(options)
     },
   },

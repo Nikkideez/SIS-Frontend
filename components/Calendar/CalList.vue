@@ -1,9 +1,10 @@
 <template>
   <!-- <v-navigation-drawer permanent style="width: 270px; height: 100%" right> -->
     <v-container class="container">
+      <!-- <v-btn @click="test">Test</v-btn> -->
     <!-- {{lists}} -->
       <!-- <v-date-picker v-model="calendar" no-title></v-date-picker> -->
-      <DateCarousel />
+      <DateCarousel :events="events"/>
       <!-- Calendar Pie Chart here -->
       <!-- <PieChart /> -->
       <v-list dense>
@@ -158,6 +159,10 @@ export default {
     selectedCategory: null,
     requestDialog: false,
   }),
+
+  props: {
+    events: Array
+  },
 
   components: {
     RequestCategoryDialog, PieChart, DateCarousel

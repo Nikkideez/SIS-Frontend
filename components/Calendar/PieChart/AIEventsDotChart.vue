@@ -34,6 +34,9 @@ export default {
         ],
       },
     },
+    props: {
+      events: Array
+    },
     options: {
       responsive: true,
       maintainAspectRatio: false,
