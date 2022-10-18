@@ -4,7 +4,7 @@
       <!-- <v-btn @click="test">Test</v-btn> -->
     <!-- {{lists}} -->
       <!-- <v-date-picker v-model="calendar" no-title></v-date-picker> -->
-      <DateCarousel :events="events"/>
+      <DateCarousel :events="events" :recommendedEvents="recommendedEvents"/>
       <!-- Calendar Pie Chart here -->
       <!-- <PieChart /> -->
       <v-list dense>
@@ -161,7 +161,8 @@ export default {
   }),
 
   props: {
-    events: Array
+    events: Array,
+    recommendedEvents: Array
   },
 
   components: {

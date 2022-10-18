@@ -177,6 +177,7 @@ export default {
     isMouseDown: false,
     requestAnimation: null,
     delay: 0,
+    recommendedEvents: null,
     data: null,
   }),
 
@@ -223,6 +224,8 @@ export default {
       console.log(JSON.parse(data))
       this.getTopPerDay(JSON.parse(data))
       this.data = JSON.parse(data)
+      // Recommended Events used for Charting (DISPLAY PURPOSES ONLY)
+      this.recommendedEvents = JSON.parse(data)
       // this.events.push(...JSON.parse(data))
       // console.log(events)
       console.log(this.events)

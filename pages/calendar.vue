@@ -8,7 +8,7 @@
 
       <!-- <v-col cols="6" md="2"> -->
         <v-navigation-drawer app right clipped :width="290">
-          <CalList @requestEvents="requestEvents" :events="calendarEvents" />
+          <CalList @requestEvents="requestEvents" :events="calendarEvents" :recommendedEvents="recommendedEvents" />
         </v-navigation-drawer>
 
       <!-- </v-col> -->
@@ -24,7 +24,8 @@ export default {
   name: "TestPage",
   components: { CalApp, CalList },
   data: () => ({
-    calendarEvents: null
+    calendarEvents: null,
+    recommendedEvents: null,
   }),
   mounted() {
     this.$watch(
@@ -33,6 +34,14 @@ export default {
       },
       (val) => {
         this.calendarEvents = val
+      }
+    );
+    this.$watch(
+      () => {
+        return this.$refs.refCalApp.recommendedEvents;
+      },
+      (val) => {
+        this.recommendedEvents = val
       }
     );
   },

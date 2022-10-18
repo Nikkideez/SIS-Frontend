@@ -31,12 +31,11 @@ export default {
             data: []
           }
         ]
+      },
+      options: {
+        responsive: true,
       }
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-    }
   }),
 
   props: {
@@ -50,11 +49,11 @@ export default {
     }
   },
   watch: {
-    calendar(val) {
+    calendar() {
       this.getEventsPerWeek();
     },
     events: {
-      handler(val) {
+      handler() {
         this.getEventsPerWeek();
       },
       deep: true
@@ -71,9 +70,9 @@ export default {
   },
   methods: {
     recalculateTable() {
-      this.chart.update();
-      console.log(this.chart);
-
+      if (this.chart) {
+        this.chart.update();
+      }
     },
 
     getEventsPerWeek() {
@@ -92,24 +91,20 @@ export default {
       this.chartData.data.labels = ids
 
       let eventData = [];
-      console.log(result);
+
+      // loop all elements within ids
+      // loop all the events within elements
       ids.forEach(element => {
         var count = 0;
         for(let i = 0; i < result[element].length; i++){
           count += result[element][i].end - result[element][i].start
-
         }
         let hours = (count / (1000 * 60 * 60)).toFixed(1);
         eventData.push(hours);
       });
 
       this.chartData.data.datasets[0].data = eventData;
-
-      // loop all elements within ids
-      // loop all the events within ids
-      if(this.chart){
-        this.recalculateTable();
-      }
+      this.recalculateTable();
       return ids
     }
   }
