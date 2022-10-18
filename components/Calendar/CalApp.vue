@@ -209,7 +209,8 @@ export default {
       const eventsCurrentWeek = this.events.filter(x => x.start >= startWeek && x.start <= endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
       const data = await this.$axios.$post('http://localhost:5000/calendar', {
         currentWeek: eventsCurrentWeek,
-        options: options
+        options: options,
+        selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY")
       }).catch((e) => {
         console.log(e)
       })
