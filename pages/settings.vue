@@ -12,28 +12,28 @@
       <v-card-text class="mt-12">
         <v-row align="center" justify="center">
           <v-col cols="12" sm="7">
-            <v-btn class="#white--text" color="violet" dark block tile>Account</v-btn>
+            <v-btn class="white--text" color="violet" dark block rounded >Account</v-btn>
              </v-col>
               <v-col cols="12" sm="7">
-               <v-btn class="white--text" color="violet" dark block tile> Notifications</v-btn>
+               <v-btn class="white--text" color="violet" dark block rounded> Notifications</v-btn>
               </v-col>
               <v-col cols="12" sm="7">
-               <v-btn class="white--text" color="violet" dark block tile> Language</v-btn>
+               <v-btn class="white--text" color="violet" dark block rounded> Language</v-btn>
               </v-col>
               <v-col cols="12" sm="7">
-               <v-btn class="white--text" color="violet" dark block tile> Appearance</v-btn>
+               <v-btn class="white--text" color="violet" dark block rounded> Appearance</v-btn>
               </v-col>
               <v-col cols="12" sm="7">
-               <v-btn class="white--text" color="violet" dark block tile> Change Password</v-btn>
+               <v-btn class="white--text" color="violet" dark block rounded> Change Password</v-btn>
               </v-col>
               <v-col cols="12" sm="7">
-               <v-btn class="white--text" color="violet" dark block tile> Privacy and Security</v-btn>
+               <v-btn class="white--text" color="violet" dark block rounded> Privacy and Security</v-btn>
               </v-col>
               <v-col cols="12" sm="7">
-               <v-btn class="white--text" color="violet" dark block tile> Help and Support</v-btn>
+               <v-btn class="white--text" color="violet" dark block rounded> Help and Support</v-btn>
               </v-col>
               <v-col cols="12" sm="7">
-               <v-btn class="white--text" color="violet" dark block tile> Invite Friends</v-btn>
+               <v-btn class="white--text" color="violet" dark block rounded> Invite Friends</v-btn>
               </v-col>
           
         </v-row>
