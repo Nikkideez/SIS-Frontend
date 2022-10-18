@@ -200,6 +200,12 @@ export default {
       // this.getEvents();
     });
   },
+
+  created() {
+    // Set Global Variable calendar to today in format "YYYY-MM-DD"
+    this.calendar = this.$moment().format("YYYY-MM-DD")
+  },
+
   methods: {
     async handleRequestAI(options) {
       console.log(options)
