@@ -3,6 +3,8 @@
     <v-container class="container">
     <!-- {{lists}} -->
       <v-date-picker v-model="calendar" no-title></v-date-picker>
+      <!-- Calendar Pie Chart here -->
+      <PieChart />
       <v-list dense>
         <v-list-group v-for="(list, i) in lists" :key="i" v-model="list.active">
           <template v-slot:activator>
@@ -118,6 +120,7 @@
 
 <script>
 import RequestCategoryDialog from "./Category/RequestCategoryDialog.vue"
+import PieChart from "./PieChart/PieChart.vue"
 
 export default {
   name: "CalList",
@@ -155,7 +158,7 @@ export default {
   }),
 
   components: {
-    RequestCategoryDialog
+    RequestCategoryDialog, PieChart
   },
   // Evan: Placeholder, remove once get user details is done
   created() {
