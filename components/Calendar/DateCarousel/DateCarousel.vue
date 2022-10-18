@@ -15,12 +15,12 @@
       <v-window-item
         :value="1"
       >
-        <PieChart />
+        <PieChart :events="events"/>
       </v-window-item>
       <v-window-item
         :value="2"
       >
-        <AIEventsDotChart />
+        <AIEventsDotChart :events="events" />
       </v-window-item>
     </v-window>
 
@@ -69,6 +69,10 @@
       step: 0,
       length: 3,
     }),
+
+    props: {
+      events: Array
+    },
 
     components: {
       PieChart,

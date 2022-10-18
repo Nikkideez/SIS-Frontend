@@ -38,6 +38,9 @@ export default {
             maintainAspectRatio: false,
         }
     }),
+    props: {
+        events: Array
+    },
     mounted() {
         const ctx = document.getElementById('myChart');
         this.chart = new Chart(ctx, this.chartData);
