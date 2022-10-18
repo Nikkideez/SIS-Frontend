@@ -2,9 +2,10 @@
   <!-- <v-navigation-drawer permanent style="width: 270px; height: 100%" right> -->
     <v-container class="container">
     <!-- {{lists}} -->
-      <v-date-picker v-model="calendar" no-title></v-date-picker>
+      <!-- <v-date-picker v-model="calendar" no-title></v-date-picker> -->
+      <DateCarousel />
       <!-- Calendar Pie Chart here -->
-      <PieChart />
+      <!-- <PieChart /> -->
       <v-list dense>
         <v-list-group v-for="(list, i) in lists" :key="i" v-model="list.active">
           <template v-slot:activator>
@@ -121,6 +122,7 @@
 <script>
 import RequestCategoryDialog from "./Category/RequestCategoryDialog.vue"
 import PieChart from "./PieChart/PieChart.vue"
+import DateCarousel from "./DateCarousel/DateCarousel.vue"
 
 export default {
   name: "CalList",
@@ -158,11 +160,10 @@ export default {
   }),
 
   components: {
-    RequestCategoryDialog, PieChart
+    RequestCategoryDialog, PieChart, DateCarousel
   },
   // Evan: Placeholder, remove once get user details is done
   created() {
-    this.calendar = this.$moment().format("YYYY-MM-DD")
     // try {
     //   this.$fire.firestore.collection('users').where('uid', '==', uid).get().then((querySnapshot) => {
     //     querySnapshot.forEach((doc) => {
@@ -172,16 +173,6 @@ export default {
     // } catch (e) {
     //   console.log(e)
     // }
-  },
-  computed: {
-    calendar: {
-      get() {
-        return this.$store.state.calendar;
-      },
-      set(val) {
-        this.$store.commit("SET_CALENDAR", val);
-      },
-    }
   },
   methods: {
     handleCategoryClick(category) {
