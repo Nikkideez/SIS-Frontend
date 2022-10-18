@@ -41,8 +41,8 @@
 <script>
 export default {
   props: {
-    user: String,
-    users: String
+    user: Object,
+    users: Object
   },
 
   methods: {

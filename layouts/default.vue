@@ -103,11 +103,11 @@ export default {
           title: 'Settings',
           to: '/settings'
         },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'TEST PAGE',
-          to: '/inspire'
-        },
+        // {
+        //   icon: 'mdi-chart-bubble',
+        //   title: 'TEST PAGE',
+        //   to: '/inspire'
+        // },
       ],
       miniVariant: true,
       right: true,

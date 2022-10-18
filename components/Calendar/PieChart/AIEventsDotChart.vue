@@ -3,7 +3,7 @@
     <canvas id="EventDotChart"></canvas>
   </v-container>
 </template>
-  
+
 <script>
 import Chart from "chart.js/auto";
 
@@ -52,4 +52,3 @@ export default {
   },
 };
 </script>
-  
