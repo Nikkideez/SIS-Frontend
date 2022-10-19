@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import CalList from "~/components/Calendar/CalList.vue";
+import CalList from "~/components/Calendar/Sidebar/CalList.vue";
 import CalApp from "~/components/Calendar/CalApp.vue";
 export default {
   name: "TestPage",

@@ -71,6 +71,7 @@
               </v-list-item-content>
             </v-list-item>
           </v-list-group>
+          
           <!-- <v-list-item
             v-for="item in list.items"
             :key="item.title"
@@ -107,6 +108,7 @@
           </v-list-item> -->
         </v-list-group>
       </v-list>
+      <CalEventList/>
       <RequestCategoryDialog
         v-model="requestDialog"
         :selectedCategory="selectedCategory"
@@ -117,7 +119,8 @@
 </template>
 
 <script>
-import RequestCategoryDialog from "./Category/RequestCategoryDialog.vue"
+import RequestCategoryDialog from "../Category/RequestCategoryDialog.vue"
+import CalEventList from "./CalEventList.vue"
 
 export default {
   name: "CalList",
@@ -155,7 +158,8 @@ export default {
   }),
 
   components: {
-    RequestCategoryDialog
+    RequestCategoryDialog,
+    CalEventList,
   },
   // Evan: Placeholder, remove once get user details is done
   created() {
