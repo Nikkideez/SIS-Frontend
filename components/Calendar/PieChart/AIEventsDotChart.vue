@@ -14,15 +14,27 @@ export default {
       type: "scatter",
       data: {
         datasets: [{
-          label: 'Recommended Events',
+          label: 'Probability of Events',
           // [{x: ..., y: ...}]
           data: [],
-          backgroundColor: 'rgb(255, 99, 132)'
-        }]
+          backgroundColor: []
+        },
+        ]
       },
       options: {
         responsive: true,
+        layout: {
+          padding: {
+            top: 3
+          }
+        },  
         plugins: {
+          legend: {
+            title: {
+              display: true,
+              text: 'Recommended Events',
+            }
+          },
           tooltip: {
             callbacks: {
               label: function(context) {
@@ -89,16 +101,22 @@ export default {
           if (this.recommendedEvents[i].length > 0) {
             let startDay = this.$moment(this.recommendedEvents[i][0].start).startOf('day').valueOf()
             for (let t = 0; t < this.recommendedEvents[i].length; t++) {
-              arrTime.push(this.recommendedEvents[i][t].start - startDay)
+              arrTime.push({start: this.recommendedEvents[i][t].start - startDay, color: this.getColor(this.recommendedEvents[i][t].probability)})
             }
           }
           arrRecommended.push(arrTime)
         }
-        console.log(arrRecommended.map((x, i) => x.map(t => ({x: i, y: t}))).flat())
-        this.chartData.data.datasets[0].data = arrRecommended.map((x, i) => x.map(t => ({x: i, y: t}))).flat()
+        // console.log(arrRecommended)
+        this.chartData.data.datasets[0].data = arrRecommended.map((x, i) => x.map(t => ({x: i, y: t.start}))).flat()
+        this.chartData.data.datasets[0].backgroundColor = arrRecommended.map((x, i) => x.map(t => (t.color))).flat()
         this.recalculateChart()
       }
     },
+    getColor(value) {
+      //value from 1 to 0
+      var hue = (value * 120).toString(10);
+      return ["hsl(", hue, ",100%,50%)"].join("");
+    }
   },
 };
 </script>
