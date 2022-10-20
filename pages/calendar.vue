@@ -60,4 +60,8 @@ export default {
     max-width: 100%;
     height: 100%;
   }
+
+  .v-application {
+    background: #303030!important;
+  }
 </style>
