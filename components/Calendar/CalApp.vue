@@ -3,7 +3,7 @@
 
     <v-container>
       <!-- <v-sheet height="64"> -->
-        <v-toolbar flat>
+        <v-toolbar flat ref="refToolbar">
           <!-- <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Create Event
           </v-btn> -->
@@ -72,7 +72,7 @@
             to make sure the calendar component takes up the rest of the page
           -->
       <!-- <v-sheet height="100%" max-height="88vh"> -->
-      <v-sheet height="100%" max-height="89vh">
+      <v-sheet height="100%" :max-height="cardHeight">
         <v-calendar
           ref="calendar"
           v-model="calendar"
@@ -178,6 +178,7 @@ export default {
     delay: 0,
     recommendedEvents: null,
     data: null,
+    cardHeight: 0
   }),
 
   computed: {
@@ -188,7 +189,18 @@ export default {
       set(val) {
         this.$store.commit("SET_CALENDAR", val);
       },
+    },
+    heightContainer: {
+      get() {
+        return this.$store.state.heightContainer;
+      },
     }
+  },
+
+  watch: {
+    heightContainer(val) {
+      this.getCalendarHeight()
+    },
   },
 
   //Call getUserEvents on page load to populate the calendar with events from calendar
@@ -206,7 +218,14 @@ export default {
     this.calendar = this.$moment().format("YYYY-MM-DD")
   },
 
+  updated() {
+    this.getCalendarHeight()
+  },
+
   methods: {
+    getCalendarHeight() { 
+      this.cardHeight = this.heightContainer - this.$refs.refToolbar.$el.clientHeight - 2
+    },
     async handleRequestAI(options) {
       console.log(options)
       this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
