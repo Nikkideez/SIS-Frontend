@@ -91,6 +91,7 @@ export default {
       this.chartData.data.labels = ids
 
       let eventData = [];
+      let eventColors = []
 
       // loop all elements within ids
       // loop all the events within elements
@@ -101,9 +102,13 @@ export default {
         }
         let hours = (count / (1000 * 60 * 60)).toFixed(1);
         eventData.push(hours);
+        eventColors.push(result[element][0].color)
       });
-
+      console.log(result)
       this.chartData.data.datasets[0].data = eventData;
+      // EVAN: Array of Respective Category Color. Comment out for now due to color naming scheme
+      // this.chartData.data.datasets[0].backgroundColor = eventColors;
+      console.log(eventColors)
       this.recalculateTable();
       return ids
     }

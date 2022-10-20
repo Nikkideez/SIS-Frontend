@@ -68,10 +68,16 @@ export default {
     },
   }),
   props: {
-    recommendedEvents: Array
+    recommendedEvents: {
+      default: {
+        type: null,
+        events: null
+      },
+      type: Object
+    }
   },
   watch: {
-    recommendedEvents: {
+    'recommendedEvents.events': {
       handler() {
         this.getRecommendedEventsPerWeek();
       },
@@ -93,22 +99,23 @@ export default {
         this.chart.update();
     },
     getRecommendedEventsPerWeek() {
-      console.log(this.recommendedEvents)
-      if (this.recommendedEvents) {
+      if (this.recommendedEvents.events) {
         let arrRecommended = []
         for (let i = 0; i < 7; i++) {
           let arrTime = []
-          if (this.recommendedEvents[i].length > 0) {
-            let startDay = this.$moment(this.recommendedEvents[i][0].start).startOf('day').valueOf()
-            for (let t = 0; t < this.recommendedEvents[i].length; t++) {
-              arrTime.push({start: this.recommendedEvents[i][t].start - startDay, color: this.getColor(this.recommendedEvents[i][t].probability)})
+          if (this.recommendedEvents.events[i].length > 0) {
+            let startDay = this.$moment(this.recommendedEvents.events[i][0].start).startOf('day').valueOf()
+            for (let t = 0; t < this.recommendedEvents.events[i].length; t++) {
+              arrTime.push({start: this.recommendedEvents.events[i][t].start - startDay, color: this.getColor(this.recommendedEvents.events[i][t].probability)})
             }
           }
           arrRecommended.push(arrTime)
         }
-        // console.log(arrRecommended)
         this.chartData.data.datasets[0].data = arrRecommended.map((x, i) => x.map(t => ({x: i, y: t.start}))).flat()
-        this.chartData.data.datasets[0].backgroundColor = arrRecommended.map((x, i) => x.map(t => (t.color))).flat()
+        if (this.recommendedEvents.type == 'single')
+          this.chartData.data.datasets[0].backgroundColor = arrRecommended.map((x) => x.map(t => (t.color))).flat()
+        else if (this.recommendedEvents.type == 'all')
+          this.chartData.data.datasets[0].backgroundColor = arrRecommended.map((x) => x.map(t => (t.color))).flat()
         this.recalculateChart()
       }
     },
