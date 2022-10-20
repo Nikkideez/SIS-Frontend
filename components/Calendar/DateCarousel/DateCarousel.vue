@@ -72,7 +72,7 @@
 
     props: {
       events: Array,
-      recommendedEvents: Array
+      recommendedEvents: Object
     },
 
     components: {

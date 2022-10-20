@@ -176,7 +176,10 @@ export default {
     isMouseDown: false,
     requestAnimation: null,
     delay: 0,
-    recommendedEvents: null,
+    recommendedEvents: {
+      type: null,
+      events: null,
+    },
     data: null,
     cardHeight: 0
   }),
@@ -229,24 +232,27 @@ export default {
     async handleRequestAI(options) {
       console.log(options)
       this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
-      const startWeek = this.$moment(this.calendar, "YYYY-MM-DD").startOf('isoWeek').valueOf()
-      const endWeek = this.$moment(this.calendar, "YYYY-MM-DD").endOf('isoWeek').valueOf()
-      const eventsCurrentWeek = this.events.filter(x => x.start >= startWeek && x.start <= endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
-      const data = await this.$axios.$post('http://localhost:5000/calendar', {
-        currentWeek: eventsCurrentWeek,
-        options: options,
-        selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY")
-      }).catch((e) => {
-        console.log(e)
+      options.forEach((option) => {
+        const startWeek = this.$moment(this.calendar, "YYYY-MM-DD").startOf('isoWeek').valueOf()
+        const endWeek = this.$moment(this.calendar, "YYYY-MM-DD").endOf('isoWeek').valueOf()
+        const eventsCurrentWeek = this.events.filter(x => x.start >= startWeek && x.start <= endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
+        this.$axios.$post('http://localhost:5000/calendar', {
+          currentWeek: eventsCurrentWeek,
+          options: option,
+          selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY")
+        }).then((data) => {
+          console.log(JSON.parse(data))
+          this.getTopPerDay(JSON.parse(data))
+          this.data = JSON.parse(data)
+          // Recommended Events used for Charting (DISPLAY PURPOSES ONLY)
+          this.recommendedEvents = { type: 'single', events: JSON.parse(data)}
+          // this.events.push(...JSON.parse(data))
+          // console.log(events)
+          console.log(this.events)
+        }).catch((e) => {
+          console.log(e)
+        })
       })
-      console.log(JSON.parse(data))
-      this.getTopPerDay(JSON.parse(data))
-      this.data = JSON.parse(data)
-      // Recommended Events used for Charting (DISPLAY PURPOSES ONLY)
-      this.recommendedEvents = JSON.parse(data)
-      // this.events.push(...JSON.parse(data))
-      // console.log(events)
-      console.log(this.events)
     },
     async handleRequestAll() {
       const data = await this.$axios.$post('http://localhost:5000/calendar/all', {
@@ -255,7 +261,16 @@ export default {
       }).catch((e) => {
         console.log(e)
       })
+      let events = []
       console.log(data)
+      if (data.length > 0) {
+        let firstDay = this.$moment(data[0].start).startOf('isoWeek').valueOf()
+        let weeks = [firstDay, firstDay + 86400000, firstDay + 2*86400000, firstDay + 3*86400000, firstDay + 4*86400000, firstDay + 5*86400000, firstDay + 6*86400000, firstDay + 7*86400000]
+        weeks.slice(0, 7).forEach((x, i) => {
+          events.push(data.filter(event => event.start >= x && event.start < weeks[i + 1]))
+        })
+        this.recommendedEvents = { type: 'all', events: events}
+      }
       // console.log(JSON.parse(data))
       this.events.push(...data)
       console.log(this.events)
