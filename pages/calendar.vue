@@ -8,7 +8,7 @@
 
       <!-- <v-col cols="6" md="2"> -->
         <v-navigation-drawer app right clipped :width="290">
-          <CalList @requestEvents="requestEvents" :events="calendarEvents" :recommendedEvents="recommendedEvents" />
+          <CalList @requestEvents="requestEvents" @requestSelectedEvents="requestSelectedEvents" :events="calendarEvents" :recommendedEvents="recommendedEvents" />
         </v-navigation-drawer>
 
       <!-- </v-col> -->
@@ -25,7 +25,10 @@ export default {
   components: { CalApp, CalList },
   data: () => ({
     calendarEvents: null,
-    recommendedEvents: null,
+    recommendedEvents: {
+      type: null,
+      events: null
+    },
   }),
   mounted() {
     this.$watch(
@@ -47,6 +50,9 @@ export default {
   },
   methods: {
     requestEvents(options) {
+      this.$refs.refCalApp.handleRequestAI(options)
+    },
+    requestSelectedEvents(options) {
       this.$refs.refCalApp.handleRequestAI(options)
     },
   },
