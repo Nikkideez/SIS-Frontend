@@ -12,10 +12,10 @@
       <v-card-text class="mt-12">
         <v-row align="center" justify="center">
           <v-col cols="12" sm="7">
-            <v-btn class="white--text" color="violet" dark block rounded >Account</v-btn>
+            <v-btn class="white--text" color="violet" dark block rounded @click="redirectToProfile()">Account</v-btn>
              </v-col>
               <v-col cols="12" sm="7">
-               <v-btn class="white--text" color="violet" dark block rounded> Notifications</v-btn>
+               <v-btn class="white--text" color="violet" dark block rounded @click="redirectToNotifications()"> Notifications</v-btn>
               </v-col>
               <v-col cols="12" sm="7">
                <v-btn class="white--text" color="violet" dark block rounded> Language</v-btn>
@@ -96,6 +96,15 @@
 <script>
 export default {
   name: 'SettingsPage',
-
+  
+  methods : {
+  redirectToProfile(){
+    this.$router.push('/profile');
+  },
+  redirectToNotifications(){
+    this.$router.push('/notifications');
+  }
 }
+}
+
 </script>
