@@ -224,7 +224,7 @@ export default {
 
   methods: {
     getCalendarHeight() { 
-      this.cardHeight = this.heightContainer - this.$refs.refToolbar.$el.clientHeight - 2
+      this.cardHeight = this.heightContainer - this.$refs.refToolbar.$el.clientHeight - 2.5
     },
     async handleRequestAI(options) {
       console.log(options)
