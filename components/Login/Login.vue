@@ -15,7 +15,7 @@
                 label="Email"
                 outlined
                 dense
-                color="#29be83"
+                color="#29be83" 
                 autocomplete="username"
                 class="mt-16"
                 v-on:keyup.enter="loginUser"

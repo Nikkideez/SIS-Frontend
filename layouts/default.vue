@@ -1,7 +1,7 @@
 <template>
-  <v-app dark>
-    <v-navigation-drawer :mini-variant="miniVariant" :clipped="clipped" fixed app >
-      <v-list>
+  <v-app dark ref="refApp">
+    <v-navigation-drawer :mini-variant="miniVariant" :clipped="clipped" fixed app v-if="activeUser && !['', 'auth'].includes($route.name)">
+      <v-list >
         <v-img v-show="!miniVariant" src="\img\autocalLogoTitle.png"></v-img>
         <v-img v-show="miniVariant" src="\autocal_logo.png"></v-img>
 
@@ -38,7 +38,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app elevation="0" clipped-right outlined>
+    <v-app-bar :clipped-left="clipped" fixed app elevation="0" clipped-right outlined  ref="refAppBar">
 
       <v-btn icon @click.stop="miniVariant = !miniVariant" v-if="activeUser">
         <v-icon>mdi-{{ `chevron-${miniVariant ? 'right' : 'left'}` }}</v-icon>
@@ -103,11 +103,11 @@ export default {
           title: 'Settings',
           to: '/settings'
         },
-        {
-          icon: 'mdi-chart-bubble',
-          title: 'TEST PAGE',
-          to: '/inspire'
-        },
+        // {
+        //   icon: 'mdi-chart-bubble',
+        //   title: 'TEST PAGE',
+        //   to: '/inspire'
+        // },
       ],
       miniVariant: true,
       right: true,
@@ -128,6 +128,14 @@ export default {
         return this.$store.state.user
       }
     },
+    heightContainer: {
+      get() {
+        return this.$store.state.heightContainer
+      },
+      set(val) {
+        this.$store.commit("SET_HEIGHT_CONTAINER", val);
+      },
+    },
   },
   watch: {
     user(val) {
@@ -145,11 +153,22 @@ export default {
       this.activeUser = this.user
     }
   },
+
+  updated() {
+    window.addEventListener("resize", this.getContainerHeight);
+    this.getContainerHeight()
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.getContainerHeight);
+  },
+
   methods: {
     // getUnits: function() {
     //   console.log("Running on initialise");
     // },
-
+    getContainerHeight() {
+      this.heightContainer = window.innerHeight - this.$refs.refAppBar.$el.clientHeight
+    },
     async getUser(uid) {
       try {
         this.$fire.firestore.collection('users').where('uid', '==', uid).get().then((querySnapshot) => {
@@ -187,5 +206,5 @@ export default {
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(168, 168, 168);
 }
-html { overflow-y: auto }
+html { overflow-y: auto; overflow-x: auto }
 </style>
