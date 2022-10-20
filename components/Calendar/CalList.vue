@@ -40,12 +40,13 @@
           >
             <template v-slot:activator>
               <!--  @click.stop="handleCategoryClick(item)" -->
-              <v-row align="center" @click.stop="handleCategoryClick(item)">
+              <v-row align="center" @click.stop="handleCategoryClick(item, input-value)">
                 <v-col md="2">
                   <v-checkbox
                     v-model="item.active"
                     :color="item.color"
                     @click.stop=""
+                    @click = handleCheckbox(item)
                     hide-details
                     class="ml-2 mb-2"
                     dense
@@ -188,6 +189,9 @@ export default {
     requestEvents(options) {
       this.$emit("requestEvents", options)
     },
+    handleCheckbox(item) {
+      console.log(item, item.active)
+    }
   },
 };
 </script>
