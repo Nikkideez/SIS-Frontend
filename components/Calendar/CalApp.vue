@@ -1,7 +1,7 @@
 <template>
   <!-- The toolbar for the calendar -->
-  <v-row>
-    <v-col>
+
+    <v-container>
       <!-- <v-sheet height="64"> -->
         <v-toolbar flat>
           <!-- <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
@@ -72,7 +72,7 @@
             to make sure the calendar component takes up the rest of the page
           -->
       <!-- <v-sheet height="100%" max-height="88vh"> -->
-      <v-sheet height="100%" max-height="85vh">
+      <v-sheet height="100%" max-height="89vh">
         <v-calendar
           ref="calendar"
           v-model="calendar"
@@ -132,8 +132,7 @@
         <!-- </div> -->
         <!-- </v-menu> -->
       </v-sheet>
-    </v-col>
-  </v-row>
+    </v-container>
 </template>
 
 <!-- Heaps of variables and functions ----------------------------------------------->
