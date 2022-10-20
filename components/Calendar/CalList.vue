@@ -61,6 +61,7 @@
                     hide-details
                     class="ml-2 mb-2"
                     dense
+                    @click = handleCheckbox(item)
                   >
                   </v-checkbox>
                 </v-col>
@@ -200,6 +201,9 @@ export default {
     requestEvents(options) {
       this.$emit("requestEvents", options)
     },
+    handleCheckbox(item) {
+      console.log(item, item.active)
+    }
   },
 };
 </script>
