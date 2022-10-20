@@ -16,7 +16,8 @@
               </v-btn>
             </v-col>
             <v-col>
-              <v-btn @click="requestEvents([lists[0].items[0].params, lists[0].items[1].params, lists[0].items[3].params])">Request</v-btn>
+              <!-- <v-btn @click="requestEvents([lists[0].items[0].params, lists[0].items[1].params, lists[0].items[3].params])">Request</v-btn> -->
+              <v-btn @click="requestMultiple">Request</v-btn>
             </v-col>
           </v-row>
         </v-list-item-content>
@@ -197,6 +198,9 @@ export default {
     handleCategoryClick(category) {
       this.selectedCategory = category
       this.requestDialog = true
+    },
+    requestMultiple() {
+      this.requestEvents(this.lists[0].items.filter(x => x.active).map(x => x.params))
     },
     requestEvents(options) {
       this.$emit("requestEvents", options)
