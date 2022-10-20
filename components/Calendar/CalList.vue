@@ -1,9 +1,26 @@
 <template>
   <!-- <v-navigation-drawer permanent style="width: 270px; height: 100%" right> -->
     <v-container class="container">
+      <!-- <v-btn @click="test">Test</v-btn> -->
     <!-- {{lists}} -->
-      <v-date-picker v-model="calendar" no-title></v-date-picker>
+      <!-- <v-date-picker v-model="calendar" no-title></v-date-picker> -->
+      <DateCarousel :events="events" :recommendedEvents="recommendedEvents"/>
+      <!-- Calendar Pie Chart here -->
+      <!-- <PieChart /> -->
       <v-list dense>
+        <v-list-item-content>
+          <v-row>
+            <v-col class="ml-5">
+              <v-btn icon>
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col>
+              <!-- <v-btn @click="requestEvents([lists[0].items[0].params, lists[0].items[1].params, lists[0].items[3].params])">Request</v-btn> -->
+              <v-btn @click="requestMultiple">Request</v-btn>
+            </v-col>
+          </v-row>
+        </v-list-item-content>
         <v-list-group v-for="(list, i) in lists" :key="i" v-model="list.active">
           <template v-slot:activator>
             <v-list-item-content>
@@ -45,6 +62,7 @@
                     hide-details
                     class="ml-2 mb-2"
                     dense
+                    @click = handleCheckbox(item)
                   >
                   </v-checkbox>
                 </v-col>
@@ -118,6 +136,8 @@
 
 <script>
 import RequestCategoryDialog from "./Category/RequestCategoryDialog.vue"
+import PieChart from "./PieChart/PieChart.vue"
+import DateCarousel from "./DateCarousel/DateCarousel.vue"
 
 export default {
   name: "CalList",
@@ -126,23 +146,23 @@ export default {
       {
         active: true,
         items: [
-          { text: "Sleep", color: "rgb(33, 150, 245)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
-          { text: "Fitness", color: "rgb(103, 58, 183)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
-          { text: "Work", color: "rgb(0, 188, 212)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
-          { text: "Leisure", color: "rgb(255, 152, 0)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
-          { text: "Education", color: "rgb(76, 175, 80)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
+          { text: "Sleep", color: "rgb(33, 150, 245)", active: true, params: {category: "Sleep", length: 5, perDay: 1, recommendations: 2, selectedDays: [0, 1, 2, 3, 4, 5, 6], color: "rgb(33, 150, 245)"}, show: false },
+          { text: "Fitness", color: "rgb(103, 58, 183)", active: true, params: {category: "Fitness", length: 5, perDay: 1, recommendations: 2, selectedDays: [0, 1, 2, 3, 4, 5, 6], color: "rgb(103, 58, 183)"}, show: false },
+          { text: "Work", color: "rgb(0, 188, 212)", active: true, params: {category: "Work", length: 5, perDay: 1, recommendations: 2, selectedDays: [0, 1, 2, 3, 4, 5, 6], color: "rgb(0, 188, 212)"}, show: false },
+          { text: "Leisure", color: "rgb(255, 152, 0)", active: true, params: {category: "Leisure", length: 5, perDay: 1, recommendations: 2, selectedDays: [0, 1, 2, 3, 4, 5, 6], color: "rgb(255, 152, 0)"}, show: false },
+          { text: "Education", color: "rgb(76, 175, 80)", active: true, params: {category: "Education", length: 5, perDay: 1, recommendations: 2, selectedDays: [0, 1, 2, 3, 4, 5, 6], color: "rgb(76, 175, 80)"}, show: false },
         ],
-        title: 'Categories',
-        type: 'Category'
+        title: 'Events',
+        type: 'Event'
       },
       // {
       //   active: true,
       //   items: [
-      //     { text: "Sleep", color: "rgb(33, 150, 245)", active: true },
-      //     { text: "Fitness", color: "rgb(103, 58, 183)", active: true },
-      //     { text: "Work", color: "rgb(0, 188, 212)", active: true },
-      //     { text: "Leisure", color: "rgb(255, 152, 0)", active: true },
-      //     { text: "Education", color: "rgb(76, 175, 80)", active: true },
+      //     { text: "Sleep", color: "rgb(33, 150, 245)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
+      //     { text: "Fitness", color: "rgb(103, 58, 183)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
+      //     { text: "Work", color: "rgb(0, 188, 212)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
+      //     { text: "Leisure", color: "rgb(255, 152, 0)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
+      //     { text: "Education", color: "rgb(76, 175, 80)", active: true, params: {length: "01:30", perDay: "1", selectedDays: "Mon, Tues, Wed, Thurs, Fri, Sat, Sun"}, show: false },
       //   ],
       //   title: 'Events',
       //   type: 'Event'
@@ -154,39 +174,40 @@ export default {
     requestDialog: false,
   }),
 
+  props: {
+    events: Array,
+    recommendedEvents: Object
+  },
+
   components: {
-    RequestCategoryDialog
+    RequestCategoryDialog, PieChart, DateCarousel
   },
   // Evan: Placeholder, remove once get user details is done
-  // created() {
-  //   try {
-  //     this.$fire.firestore.collection('users').where('uid', '==', uid).get().then((querySnapshot) => {
-  //       querySnapshot.forEach((doc) => {
-  //         this.users = doc.data()
-  //       })
-  //     })
-  //   } catch (e) {
-  //     console.log(e)
-  //   }
-  // },
-  computed: {
-    calendar: {
-      get() {
-        return this.$store.state.calendar;
-      },
-      set(val) {
-        this.$store.commit("SET_CALENDAR", val);
-      },
-    }
+  created() {
+    // try {
+    //   this.$fire.firestore.collection('users').where('uid', '==', uid).get().then((querySnapshot) => {
+    //     querySnapshot.forEach((doc) => {
+    //       this.users = doc.data()
+    //     })
+    //   })
+    // } catch (e) {
+    //   console.log(e)
+    // }
   },
   methods: {
     handleCategoryClick(category) {
       this.selectedCategory = category
       this.requestDialog = true
     },
+    requestMultiple() {
+      this.requestEvents(this.lists[0].items.filter(x => x.active).map(x => x.params))
+    },
     requestEvents(options) {
       this.$emit("requestEvents", options)
     },
+    handleCheckbox(item) {
+      console.log(item, item.active)
+    }
   },
 };
 </script>

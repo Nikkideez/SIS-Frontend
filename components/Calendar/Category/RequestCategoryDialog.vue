@@ -109,14 +109,14 @@ export default {
       const idxDays = this.selectedDays.map(x => this.daysDictionary.indexOf(x))
       const arrLength = this.length.split(':')
       const length = parseInt(arrLength[0]) * 2 + (arrLength[1] == '30' ? 1 : 0)
-      this.$emit("request", {
+      this.$emit("request", [{
         category: this.category.text,
         length: length,
         perDay: this.perDay,
         recommendations: this.recommendations,
         selectedDays: idxDays,
         color: this.category.color
-      })
+      }])
       this.show = false
     },
     cleanUp() {

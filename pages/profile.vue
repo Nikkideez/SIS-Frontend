@@ -8,7 +8,7 @@
               <ProfileView @incrementStep="incrementStep" :user="user" :users="users" />
             </v-window-item>
             <v-window-item :value="2">
-              <ProfileEdit @incrementStep="incrementStep" />
+              <ProfileEdit @incrementStep="incrementStep" :user="user" :users="users" />
             </v-window-item>
           </v-window>
         </v-card>

@@ -1,9 +1,9 @@
 <template>
   <!-- The toolbar for the calendar -->
-  <v-row>
-    <v-col>
+
+    <v-container>
       <!-- <v-sheet height="64"> -->
-        <v-toolbar flat>
+        <v-toolbar flat ref="refToolbar">
           <!-- <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
             Create Event
           </v-btn> -->
@@ -35,14 +35,14 @@
           </v-toolbar-title>
           <v-spacer></v-spacer>
           <!-- EVAN: Remove, Use Sidebar -->
-          <!-- <v-btn
+          <v-btn
             outlined
             class="mr-4"
             color="grey darken-2"
-            @click="handleRequestAI"
+            @click="handleRequestAll"
           >
-            Request AI
-          </v-btn> -->
+            Request All Categories
+          </v-btn>
           <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
@@ -72,7 +72,7 @@
             to make sure the calendar component takes up the rest of the page
           -->
       <!-- <v-sheet height="100%" max-height="88vh"> -->
-      <v-sheet height="100%" max-height="85vh">
+      <v-sheet height="100%" :max-height="cardHeight">
         <v-calendar
           ref="calendar"
           v-model="calendar"
@@ -132,8 +132,7 @@
         <!-- </div> -->
         <!-- </v-menu> -->
       </v-sheet>
-    </v-col>
-  </v-row>
+    </v-container>
 </template>
 
 <!-- Heaps of variables and functions ----------------------------------------------->
@@ -177,7 +176,12 @@ export default {
     isMouseDown: false,
     requestAnimation: null,
     delay: 0,
+    recommendedEvents: {
+      type: null,
+      events: null,
+    },
     data: null,
+    cardHeight: 0
   }),
 
   computed: {
@@ -188,7 +192,18 @@ export default {
       set(val) {
         this.$store.commit("SET_CALENDAR", val);
       },
+    },
+    heightContainer: {
+      get() {
+        return this.$store.state.heightContainer;
+      },
     }
+  },
+
+  watch: {
+    heightContainer(val) {
+      this.getCalendarHeight()
+    },
   },
 
   //Call getUserEvents on page load to populate the calendar with events from calendar
@@ -200,24 +215,64 @@ export default {
       // this.getEvents();
     });
   },
+
+  created() {
+    // Set Global Variable calendar to today in format "YYYY-MM-DD"
+    this.calendar = this.$moment().format("YYYY-MM-DD")
+  },
+
+  updated() {
+    this.getCalendarHeight()
+  },
+
   methods: {
+    getCalendarHeight() { 
+      this.cardHeight = this.heightContainer - this.$refs.refToolbar.$el.clientHeight - 2.5
+    },
     async handleRequestAI(options) {
       console.log(options)
       this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
-      const startWeek = this.$moment().startOf('isoWeek').valueOf()
-      const endWeek = this.$moment().endOf('isoWeek').valueOf()
-      const eventsCurrentWeek = this.events.filter(x => x.start >= startWeek && x.start <= endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
-      const data = await this.$axios.$post('http://localhost:5000/calendar', {
-        currentWeek: eventsCurrentWeek,
-        options: options
+      options.forEach((option) => {
+        const startWeek = this.$moment(this.calendar, "YYYY-MM-DD").startOf('isoWeek').valueOf()
+        const endWeek = this.$moment(this.calendar, "YYYY-MM-DD").endOf('isoWeek').valueOf()
+        const eventsCurrentWeek = this.events.filter(x => x.start >= startWeek && x.start <= endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
+        this.$axios.$post('http://localhost:5000/calendar', {
+          currentWeek: eventsCurrentWeek,
+          options: option,
+          selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY")
+        }).then((data) => {
+          console.log(JSON.parse(data))
+          this.getTopPerDay(JSON.parse(data))
+          this.data = JSON.parse(data)
+          // Recommended Events used for Charting (DISPLAY PURPOSES ONLY)
+          this.recommendedEvents = { type: 'single', events: JSON.parse(data)}
+          // this.events.push(...JSON.parse(data))
+          // console.log(events)
+          console.log(this.events)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+    },
+    async handleRequestAll() {
+      const data = await this.$axios.$post('http://localhost:5000/calendar/all', {
+        // selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").format("DD.MM.YYYY")
+        selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY")
       }).catch((e) => {
         console.log(e)
       })
-      console.log(JSON.parse(data))
-      this.getTopPerDay(JSON.parse(data))
-      this.data = JSON.parse(data)
-      // this.events.push(...JSON.parse(data))
-      // console.log(events)
+      let events = []
+      console.log(data)
+      if (data.length > 0) {
+        let firstDay = this.$moment(data[0].start).startOf('isoWeek').valueOf()
+        let weeks = [firstDay, firstDay + 86400000, firstDay + 2*86400000, firstDay + 3*86400000, firstDay + 4*86400000, firstDay + 5*86400000, firstDay + 6*86400000, firstDay + 7*86400000]
+        weeks.slice(0, 7).forEach((x, i) => {
+          events.push(data.filter(event => event.start >= x && event.start < weeks[i + 1]))
+        })
+        this.recommendedEvents = { type: 'all', events: events}
+      }
+      // console.log(JSON.parse(data))
+      this.events.push(...data)
       console.log(this.events)
     },
     acceptRecommendation(event) {

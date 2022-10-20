@@ -1,25 +1,54 @@
 <template>
-  <v-row>
-    <v-col class="text-center">
-      <img
-        src="/v.png"
-        alt="AutoCal"
-        class="mb-5"
-      >
-      <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
-        <footer>
-          <small>
-            <em>&mdash;John Johnson</em>
-          </small>
-        </footer>
-      </blockquote>
-    </v-col>
-  </v-row>
+  
+  <v-container>
+    <div>
+      <canvas id="myChart"></canvas>
+      <v-btn @click="recalculateTable">Generate</v-btn>
+      <h1>Hello World</h1>
+    </div>
+  </v-container>
+  
 </template>
 
 <script>
+import Chart from 'chart.js/auto';
+
 export default {
-  name: 'InspirePage'
+  data: () => ({
+    chart: null,
+
+    chartData: {
+      type: "doughnut",
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [
+          {
+            label: 'Data One',
+            backgroundColor: [
+              'rgb(255, 99, 132)',
+              'rgb(54, 162, 235)',
+              'rgb(255, 205, 86)'
+            ],
+            borderColor: 'rgb(255, 255, 255)',
+            data: [40, 20, 12, 39, 10, 40, 39]
+          }
+        ]
+      }
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  }),
+  mounted() {
+    const ctx = document.getElementById('myChart');
+    this.chart = new Chart(ctx, this.chartData);
+  },
+  methods: {
+    recalculateTable() {
+      this.chart.update();
+      console.log(this.chart);
+    }
+  }
 }
 </script>
