@@ -74,11 +74,11 @@
                   <v-icon>mdi-chevron-down</v-icon>
                 </v-btn>
               </v-col>
-              <v-col align="right">
+              <!-- <v-col align="right">
                 <v-btn icon @click.stop="">
                   <v-icon>mdi-dots-vertical</v-icon>
                 </v-btn>
-              </v-col>
+              </v-col> -->
             </v-row>
           </template>
           <v-list-item>

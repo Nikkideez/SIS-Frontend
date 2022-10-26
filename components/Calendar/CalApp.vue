@@ -256,7 +256,6 @@ export default {
           this.recommendedEvents = { type: 'single', events: JSON.parse(data)}
           // this.events.push(...JSON.parse(data))
           // console.log(events)
-          this.changeColors()
           console.log(this.events)
         }).catch((e) => {
           console.log(e)
@@ -566,6 +565,7 @@ export default {
     // Sending events to the firestore database
     async sendCalendarEvents() {
       console.log(this.events);
+      this.changeColors() // Color code the events
       try {
         await setDoc(doc(this.$fire.firestore, "events", "test"), {
           events: this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true), //Save Only Confirmed Events
