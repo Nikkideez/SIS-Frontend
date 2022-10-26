@@ -192,7 +192,7 @@ export default {
   width: 15px;
 }
 
-::-webkit-scrollbar-track {
+/* ::-webkit-scrollbar-track {
   background: #e6e6e6;
   border-left: 1px solid #dadada;
 }
@@ -204,7 +204,24 @@ export default {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(168, 168, 168);
+  background: rgb(168, 168, 168); */
+/* } */
+
+.v-calendar-daily__scroll-area::-webkit-scrollbar {
+  width: 15px;
 }
+.v-calendar-daily__scroll-area::-webkit-scrollbar-track {
+  background: #202020;
+  border-left: 1px solid #2c2c2c;
+}
+.v-calendar-daily__scroll-area::-webkit-scrollbar-thumb {
+  background: #3e3e3e;
+  border: solid 3px #202020;
+  /* border-radius: 7px; */
+}
+.v-calendar-daily__scroll-area::-webkit-scrollbar-thumb:hover {
+  background: rgb(177, 177, 177);
+}
+
 html { overflow-y: auto; overflow-x: auto }
 </style>
