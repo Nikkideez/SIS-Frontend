@@ -5,8 +5,17 @@
       <v-card-text>
         <v-row>
           <v-col>
-            <v-select
+            <v-text-field
               v-model="category.text"
+              label="Name"
+              :value="category.text"
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-select
+              v-model="category.params.category"
               :items="categories"
               label="Category"
             ></v-select>
@@ -18,6 +27,7 @@
               v-model="length"
               :items="lengthDictionary"
               label="Length"
+              @change="checkChange"
             ></v-select>
           </v-col>
           <v-col>
@@ -47,9 +57,9 @@
         </v-row>
       </v-card-text>
       <v-card-actions>
-        <v-btn text @click="show = false">Cancel</v-btn>
+        <v-btn text @click="show = false" color="red">Cancel</v-btn>
         <v-spacer></v-spacer>
-        <v-btn text color="red" @click="getEvents">Submit</v-btn>
+        <v-btn text color="light-blue" @click="getEvents">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -60,6 +70,7 @@ export default {
   name: "CategoryDialog",
   props: ["value", "selectedCategory"],
   data: () => ({
+    names: {Fitness: 'Gym', Sleep: "Sleep", Work: "Work", Leisure: "Relax", Education: "Study"},
     categories: ["Fitness", "Sleep", "Work", "Leisure", "Education"],
     daysDictionary: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
     selectedDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"], //Default
@@ -106,17 +117,20 @@ export default {
       return HHMM
     },
     getEvents() {
+      console.log(this.category)
       const idxDays = this.selectedDays.map(x => this.daysDictionary.indexOf(x))
       const arrLength = this.length.split(':')
       const length = parseInt(arrLength[0]) * 2 + (arrLength[1] == '30' ? 1 : 0)
-      this.$emit("request", [{
-        category: this.category.text,
+      this.$emit("updateList", {
+        text: this.category.text,
+        category: this.category.params.category,
         length: length,
         perDay: this.perDay,
         recommendations: this.recommendations,
         selectedDays: idxDays,
-        color: this.category.color
-      }])
+        color: this.category.color,
+        index: this.category.index
+      })
       this.show = false
     },
     cleanUp() {
@@ -125,6 +139,9 @@ export default {
       this.recommendations = 1
       this.selectedDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     },
+    checkChange() {
+      console.log(this.length)
+    }
   }
 };
 </script>

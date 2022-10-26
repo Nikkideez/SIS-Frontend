@@ -256,6 +256,7 @@ export default {
           this.recommendedEvents = { type: 'single', events: JSON.parse(data)}
           // this.events.push(...JSON.parse(data))
           // console.log(events)
+          this.changeColors()
           console.log(this.events)
         }).catch((e) => {
           console.log(e)
