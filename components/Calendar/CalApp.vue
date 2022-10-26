@@ -237,17 +237,31 @@ export default {
     getCalendarHeight() { 
       this.cardHeight = this.heightContainer - this.$refs.refToolbar.$el.clientHeight - 2.5
     },
+    getEventsWithinWeek(start, end) {
+      return this.events.filter(x => x.start >= start && x.start <= end).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
+    },
+    getTrainingData() { 
+      let trainingData = {}
+      for (let i = 1; i <= 4; i++) {
+        const startWeek = this.$moment(this.calendar, "YYYY-MM-DD").startOf('isoWeek').subtract(i, 'week').valueOf()
+        const endWeek = this.$moment(this.calendar, "YYYY-MM-DD").endOf('isoWeek').subtract(i, 'week').valueOf()
+        trainingData[`previousweek${i}`] = this.getEventsWithinWeek(startWeek, endWeek)
+      }
+      return trainingData
+    },
     async handleRequestAI(options) {
       console.log(options)
+      const trainingData = this.getTrainingData()
       this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
       options.forEach((option) => {
         const startWeek = this.$moment(this.calendar, "YYYY-MM-DD").startOf('isoWeek').valueOf()
         const endWeek = this.$moment(this.calendar, "YYYY-MM-DD").endOf('isoWeek').valueOf()
-        const eventsCurrentWeek = this.events.filter(x => x.start >= startWeek && x.start <= endWeek).map(x => ({start: x.start, end: x.end, label: x.name})).sort((a, b) => a.start - b.start)
+        const eventsCurrentWeek = this.getEventsWithinWeek(startWeek, endWeek)
         this.$axios.$post('http://localhost:5000/calendar', {
           currentWeek: eventsCurrentWeek,
           options: option,
-          selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY")
+          selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY"),
+          trainingData: trainingData
         }).then((data) => {
           console.log(JSON.parse(data))
           this.getTopPerDay(JSON.parse(data))
@@ -264,8 +278,8 @@ export default {
     },
     async handleRequestAll() {
       const data = await this.$axios.$post('http://localhost:5000/calendar/all', {
-        // selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").format("DD.MM.YYYY")
-        selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY")
+        selectedWeek: this.$moment(this.calendar, "YYYY-MM-DD").startOf("isoWeek").format("DD.MM.YYYY"),
+        trainingData: this.getTrainingData()
       }).catch((e) => {
         console.log(e)
       })
