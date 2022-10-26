@@ -7,8 +7,8 @@
       <!-- </v-col> -->
 
       <!-- <v-col cols="6" md="2"> -->
-        <v-navigation-drawer app right clipped :width="290">
-          <CalList @requestEvents="requestEvents" @requestSelectedEvents="requestSelectedEvents" :events="calendarEvents" :recommendedEvents="recommendedEvents" />
+        <v-navigation-drawer app right clipped :width="290" :permanent="true">
+          <CalList @requestEvents="requestEvents" @requestSelectedEvents="requestSelectedEvents" :events="calendarEvents" :recommendedEvents="recommendedEvents" @changeColors="changeColors"/>
         </v-navigation-drawer>
 
       <!-- </v-col> -->
@@ -55,6 +55,10 @@ export default {
     requestSelectedEvents(options) {
       this.$refs.refCalApp.handleRequestAI(options)
     },
+    changeColors() {
+      console.log('point 2')
+      this.$refs.refCalApp.changeColors();
+    }
   },
 };
 </script>

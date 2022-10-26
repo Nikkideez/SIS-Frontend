@@ -16,6 +16,11 @@
               </v-btn>
             </v-col>
             <v-col>
+              <v-btn @click="changeColors">
+                C
+              </v-btn>
+            </v-col>
+            <v-col>
               <!-- <v-btn @click="requestEvents([lists[0].items[0].params, lists[0].items[1].params, lists[0].items[3].params])">Request</v-btn> -->
               <v-btn @click="requestMultiple">Request</v-btn>
             </v-col>
@@ -207,6 +212,10 @@ export default {
     },
     handleCheckbox(item) {
       console.log(item, item.active)
+    },
+    changeColors() {
+      console.log('point 1')
+      this.$emit('changeColors')
     }
   },
 };

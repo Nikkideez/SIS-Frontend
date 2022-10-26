@@ -78,6 +78,7 @@
           v-model="calendar"
           color="primary"
           :events="events"
+          
           :event-ripple="false"
           :type="type"
           :weekdays="weekdays"
@@ -181,7 +182,14 @@ export default {
       events: null,
     },
     data: null,
-    cardHeight: 0
+    cardHeight: 0,
+    colorKeys: {
+      Sleep: 'blue',
+      Fitness: 'deep-purple',
+      Work: 'cyan',
+      Leisure: 'orange',
+      Education: 'green'
+    }
   }),
 
   computed: {
@@ -274,6 +282,7 @@ export default {
       // console.log(JSON.parse(data))
       this.events.push(...data)
       console.log(this.events)
+      this.changeColors()
     },
     acceptRecommendation(event) {
       const i = this.events.indexOf(event);
@@ -585,6 +594,15 @@ export default {
         this.events = doc.data().events
       })
     },
+    // Color coding all events
+    changeColors(){
+      console.log('point 3')
+      for(let i in this.events) {
+        this.events[i].color = this.colorKeys[this.events[i].name]
+        console.log(this.events[i].name)
+      }
+      this.$forceUpdate();
+    }
   },
 };
 </script>
