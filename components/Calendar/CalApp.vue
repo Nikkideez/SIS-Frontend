@@ -253,6 +253,7 @@ export default {
     async handleRequestAI(options) {
       console.log(options)
       this.data = []
+      this.recommendedEvents = { type: 'single', events: [[], [], [], [], [], [], []]}
       const trainingData = this.getTrainingData()
       this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
       options.forEach((option) => {
@@ -270,11 +271,16 @@ export default {
           // this.data = JSON.parse(data)
           this.data.push({event: option.category, recommendations: JSON.parse(data)})
           // Recommended Events used for Charting (DISPLAY PURPOSES ONLY)
-          this.recommendedEvents = { type: 'single', events: JSON.parse(data)}
+          // this.recommendedEvents = { type: 'single', events: JSON.parse(data)}
+          // this.recommendedEvents.events = this.recommendedEvents.events.concat(JSON.parse(data).flat())
+          this.recommendedEvents.events.forEach((day, i) => {
+            this.recommendedEvents.events[i] = this.recommendedEvents.events[i].concat(JSON.parse(data)[i])
+          })
           // this.events.push(...JSON.parse(data))
           // console.log(events)
           console.log(this.data)
           console.log(this.events)
+          console.log(this.recommendedEvents)
         }).catch((e) => {
           console.log(e)
         })
