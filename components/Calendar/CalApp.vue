@@ -125,6 +125,7 @@
             v-model="selectedOpen"
             :selectedEvent="selectedEvent"
             :activator="selectedElement"
+            @acceptAll="acceptAllRecommendation"
             @accept="acceptRecommendation"
             @reject="rejectRecommendation"
             offset-x
@@ -251,6 +252,7 @@ export default {
     },
     async handleRequestAI(options) {
       console.log(options)
+      // this.data = []
       const trainingData = this.getTrainingData()
       this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
       options.forEach((option) => {
@@ -266,10 +268,12 @@ export default {
           console.log(JSON.parse(data))
           this.getTopPerDay(JSON.parse(data))
           this.data = JSON.parse(data)
+          // this.data.push({event: options.name, recommendations: JSON.parse(data)})
           // Recommended Events used for Charting (DISPLAY PURPOSES ONLY)
           this.recommendedEvents = { type: 'single', events: JSON.parse(data)}
           // this.events.push(...JSON.parse(data))
           // console.log(events)
+          console.log(this.data)
           console.log(this.events)
         }).catch((e) => {
           console.log(e)
@@ -304,6 +308,17 @@ export default {
       const formatColor = this.events[i].color.slice(0, this.events[i].color.lastIndexOf(', ')) + ')'
       this.events[i].color = formatColor
       this.events[i].recommend = false
+    },
+    acceptAllRecommendation() {
+      this.events.forEach(event => {
+        if (event["recommend"] !== undefined) {
+          if (event.recommend) {
+            const formatColor = event.color.slice(0, event.color.lastIndexOf(', ')) + ')'
+            event.color = formatColor
+            event.recommend = false
+          }
+        }
+      })
     },
     rejectRecommendation(event) {
       const i = this.events.indexOf(event);
