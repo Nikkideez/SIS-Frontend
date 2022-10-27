@@ -86,7 +86,7 @@
               <p>Category: {{ item.params.category }}</p>
               <p>Length: {{ item.params.length / 2 }} Hours</p>
               <p>Max Per Day: {{ item.params.perDay }}</p>
-              <p>Days: {{ item.params.selectedDays }}</p>
+              <p>Days: {{ item.params.selectedDays.map(x => ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"][x]).join(", ") }}</p>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
