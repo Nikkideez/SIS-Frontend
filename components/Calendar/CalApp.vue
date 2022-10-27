@@ -613,8 +613,9 @@ export default {
     changeColors(){
       console.log('point 3')
       for(let i in this.events) {
-        this.events[i].color = this.colorKeys[this.events[i].name]
-        console.log(this.events[i].name)
+        if (typeof this.colorKeys[this.events[i].name] !== "undefined") {
+          this.events[i].color = this.colorKeys[this.events[i].name]
+        }
       }
       this.$forceUpdate();
     }
