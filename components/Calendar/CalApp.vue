@@ -41,7 +41,7 @@
             color="grey darken-2"
             @click="handleRequestAll"
           >
-            Request All Categories
+            Request All Events
           </v-btn>
           <v-spacer></v-spacer>
           <v-menu bottom right>

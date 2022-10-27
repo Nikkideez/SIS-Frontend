@@ -58,7 +58,7 @@
                     <v-divider class="my-2"/>
                     <div class="text-uppercase text-colour">Pro Friends Integration</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase text-h4 mt-6 text-colour">$3.00 </div><p class="text-colour">monthly</p>
+                    <div class="text-uppercase text-h4 mt-6 text-colour">$15.99 </div><p class="text-colour">monthly</p>
                     <v-btn
                         v-bind="size"
                         rounded
@@ -93,7 +93,7 @@
                     <v-divider class="my-2"/>
                     <div class="text-uppercase text-colour">Enterprise Integration</div>
                     <v-divider class="my-2"/>
-                    <div class="text-uppercase text-h4 mt-6 text-colour">$6.00</div><p class="text-colour">monthly</p>
+                    <div class="text-uppercase text-h4 mt-6 text-colour">$29.99</div><p class="text-colour">monthly</p>
                     <v-btn
                         v-bind="size"
                         rounded
