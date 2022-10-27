@@ -252,7 +252,7 @@ export default {
     },
     async handleRequestAI(options) {
       console.log(options)
-      // this.data = []
+      this.data = []
       const trainingData = this.getTrainingData()
       this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
       options.forEach((option) => {
@@ -267,8 +267,8 @@ export default {
         }).then((data) => {
           console.log(JSON.parse(data))
           this.getTopPerDay(JSON.parse(data))
-          this.data = JSON.parse(data)
-          // this.data.push({event: options.name, recommendations: JSON.parse(data)})
+          // this.data = JSON.parse(data)
+          this.data.push({event: option.category, recommendations: JSON.parse(data)})
           // Recommended Events used for Charting (DISPLAY PURPOSES ONLY)
           this.recommendedEvents = { type: 'single', events: JSON.parse(data)}
           // this.events.push(...JSON.parse(data))
@@ -321,14 +321,24 @@ export default {
       })
     },
     rejectRecommendation(event) {
-      const i = this.events.indexOf(event);
-      console.log(this.data)
-      console.log(this.data[event.start_day])
-      this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
-      this.data[event.start_day].pop()
-      this.getTopPerDay(this.data)
+      // const i = this.events.indexOf(event);
+      // console.log(this.data)
+      // console.log(this.data[event.start_day])
+      // this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
+      // this.data[event.start_day].pop()
+      // this.getTopPerDay(this.data)
+      // console.log(event)
       console.log(event)
 
+      this.events = this.events.filter(x => x.hasOwnProperty('recommend') ? x.recommend ? false : true : true)
+      const dataIndex = this.data.map(x => x.event).indexOf(event.category)
+      console.log(dataIndex)
+      this.data[dataIndex].recommendations[event.start_day].pop()
+      // this.getTopPerDay(this.data)
+      this.data.forEach(data => {
+        this.getTopPerDay(data.recommendations)
+      })
+      console.log(this.data)
     },
     getTopPerDay(data) {
       data.forEach(week => {
