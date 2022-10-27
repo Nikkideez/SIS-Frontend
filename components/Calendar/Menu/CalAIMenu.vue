@@ -11,6 +11,9 @@
     <!-- <v-card color="grey darken-3" width="70px" flat> -->
       <!-- <v-card-text> -->
         <!-- <v-container v-if="selectedEvent"> -->
+          <v-btn @click="acceptAll">
+            <v-icon>mdi-check-all</v-icon>
+          </v-btn>
           <v-btn @click="accept">
             <v-icon>mdi-check</v-icon>
           </v-btn>
@@ -64,6 +67,10 @@ export default {
     }
   },
   methods: {
+    acceptAll() {
+      this.$emit("acceptAll");
+      this.show = false;
+    },
     accept() {
       this.$emit("accept", this.selectedEvent);
       this.show = false;
